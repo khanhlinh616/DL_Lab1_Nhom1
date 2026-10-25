@@ -10,7 +10,7 @@ Input (1×28×28) → Flatten(784) → Linear(784→256) → ReLU → Dropout �
 
 - Không khai thác cấu trúc không gian
 - Dùng làm mức tham chiếu tối thiểu
-- Tham số: ~204 000
+- Tham số: 203 530
 
 ### 2. SimpleCNN (Mô hình chính)
 
@@ -27,7 +27,7 @@ GAP: AdaptiveAvgPool(1×1) → Flatten → Linear(64→256) → ReLU → Dropout
 | Global Avg Pool | Giảm tham số, giảm overfitting |
 | Dropout(0.3) | Regularization |
 
-- **Tham số:** ~70 000–80 000 (nhỏ gọn, đủ cho 28×28)
+- **Tham số:** 38 122 (nhỏ gọn, giảm đáng kể tham số nhờ Global Average Pooling)
 
 ## Input/Output
 

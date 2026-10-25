@@ -58,16 +58,16 @@ def build_notebook():
 
     # 1. Header & Overview
     cells.append(nbf.v4.new_markdown_cell(
-r"""# BÁO CÁO TOÀN DIỆN: PHÂN LOẠI ẢNH THỜI TRANG FASHIONMNIST BẰNG PYTORCH
-## Quy trình Deep Learning chuẩn 21 bước — Khám phá dữ liệu, Huấn luyện, Đánh giá và Phân tích lỗi
+r"""# BÁO CÁO THỰC NGHIỆM: PHÂN LOẠI ẢNH THỜI TRANG FASHIONMNIST BẰNG PYTORCH
+## Khám phá dữ liệu, Huấn luyện, Đánh giá và Phân tích lỗi
 
 ---
 ### THÔNG TIN TỔNG QUAN
-- **Đề tài:** Phân loại ảnh thời trang FashionMNIST (10 lớp) sử dụng Deep Learning (PyTorch).
-- **Mục tiêu:** Áp dụng tư duy kỹ thuật Machine Learning / Deep Learning chuẩn mực gồm 21 bước; xây dựng pipeline tái lập được, kiểm chứng bằng thực nghiệm và trực quan hóa toàn diện.
+- **Đề tài:** Phân loại ảnh thời trang FashionMNIST (10 lớp) sử dụng PyTorch.
+- **Mục tiêu:** Xây dựng pipeline phân loại ảnh hoàn chỉnh, so sánh kiến trúc BaselineMLP và SimpleCNN, đánh giá định lượng và trực quan hóa kết quả.
 - **Thư viện trực quan hóa chính:**
-  1. `matplotlib.pyplot` (phiên bản `3.11.2`): Vẽ lưới ảnh mẫu (sample grid), biểu đồ lịch sử huấn luyện (loss/accuracy curves), phổ histogram pixel, biểu đồ cột F1-score và lưới phân tích sai số (error analysis grid).
-  2. `seaborn` (phiên bản `0.13.2`): Vẽ ma trận nhầm lẫn (heatmap Confusion Matrix) cả dạng số lượng tuyệt đối lẫn chuẩn hóa tỷ lệ phần trăm (percentage normalized).
+  1. `matplotlib.pyplot` (phiên bản `3.11.2`): Vẽ lưới ảnh mẫu (sample grid), đường cong học tập (loss/accuracy curves), phổ histogram pixel, biểu đồ cột F1-score và lưới phân tích sai số (error analysis grid).
+  2. `seaborn` (phiên bản `0.13.2`): Vẽ ma trận nhầm lẫn (heatmap Confusion Matrix) dạng số lượng mẫu và chuẩn hóa tỷ lệ phần trăm.
 - **Thư viện Deep Learning & Tính toán:**
   - `PyTorch` (phiên bản `2.14.1+cpu`) & `torchvision` (`0.29.1+cpu`)
   - `NumPy` (`2.5.2`) & `scikit-learn` (`1.9.1`) & `Pillow` (`12.3.0`)
@@ -133,7 +133,7 @@ else:
     cells.append(nbf.v4.new_markdown_cell(
 r"""**Giải thích và Nhận xét về Biểu đồ Phân phối Lớp:**
 1. **Đặc điểm phân phối:**
-   - Tập huấn luyện (Train) gồm **60,000 mẫu**, chia đều tuyệt đối cho 10 lớp: mỗi lớp có đúng **6,000 mẫu** (10.0%).
+   - Tập huấn luyện (Train) gồm **60,000 mẫu**, chia đều cho 10 lớp: mỗi lớp có đúng **6,000 mẫu** (10.0%).
    - Tập kiểm thử (Test) gồm **10,000 mẫu**, chia đều mỗi lớp đúng **1,000 mẫu** (10.0%).
 2. **Quyết định kỹ thuật rút ra:**
    - Dữ liệu **hoàn toàn cân bằng (balanced dataset)**, do đó không cần kỹ thuật Oversampling, Undersampling (như SMOTE) hay Class-Weighted Loss.
@@ -214,7 +214,7 @@ r"""**Giải thích thông số thống kê thu được từ EDA:**
   - Pixel Mean toàn tập: $\mu \approx \mathbf{0.2860}$
   - Pixel Std toàn tập: $\sigma \approx \mathbf{0.3530}$
   - Dải giá trị: $[0.0, 1.0]$
-- **Nhận xét phổ pixel:** Cột giá trị gần 0.0 chiếm mật độ vượt trội, tương ứng với nền đen (background) xung quanh vật phẩm. Tiền cảnh (foreground trang phục) phân bố trong khoảng $[0.2, 1.0]$.
+- **Nhận xét phổ pixel:** Cột giá trị gần 0.0 chiếm phần lớn số lượng pixel, tương ứng với nền đen (background) xung quanh vật thể. Phần đối tượng trang phục phân bố trong khoảng $[0.2, 1.0]$.
 - **Ứng dụng vào Tiền xử lý (Preprocessing):** Sử dụng phép biến đổi chuẩn hóa Z-score chuẩn theo channel đơn:
   $$\text{pixel}_{\text{normalized}} = \frac{\text{pixel} - 0.2860}{0.3530}$$
   giúp đưa giá trị đầu vào về phân phối có trung bình 0 và phương sai 1, giúp gradient lan truyền ổn định, tránh bão hòa hàm kích hoạt.
@@ -233,9 +233,9 @@ Dự án thiết kế hai mô hình theo phương pháp khoa học đối chứn
    - Hạn chế: Ép phẳng ảnh 2D thành vector 1D làm triệt tiêu tính bất biến tịnh tiến (translation invariance) và mối quan hệ không gian lân cận của các điểm ảnh.
 
 2. **`SimpleCNN` (Mô hình Deep Learning chính):**
-   - **Conv Block 1:** `Conv2D(1→32, kernel=3, padding=1)` $\rightarrow$ `ReLU` $\rightarrow$ `MaxPool2D(2, 2)` (ảnh $28 \times 28 \rightarrow 14 \times 14$).
-   - **Conv Block 2:** `Conv2D(32→64, kernel=3, padding=1)` $\rightarrow$ `ReLU` $\rightarrow$ `MaxPool2D(2, 2)` (ảnh $14 \times 14 \rightarrow 7 \times 7$).
-   - **Classifier:** `Flatten(64 * 7 * 7 = 3136)` $\rightarrow$ `Linear(3136, 256)` $\rightarrow$ `ReLU` $\rightarrow$ `Dropout(0.3)` $\rightarrow$ `Linear(256, 10)`.
+   - **Conv Block 1:** `Conv2D(1→32, kernel=3, padding=1)` $\rightarrow$ `BatchNorm` $\rightarrow$ `ReLU` $\rightarrow$ `MaxPool2D(2, 2)` (ảnh $28 \times 28 \rightarrow 14 \times 14$).
+   - **Conv Block 2:** `Conv2D(32→64, kernel=3, padding=1)` $\rightarrow$ `BatchNorm` $\rightarrow$ `ReLU` $\rightarrow$ `MaxPool2D(2, 2)` (ảnh $14 \times 14 \rightarrow 7 \times 7$).
+   - **Classifier:** `AdaptiveAvgPool2D(1, 1)` $\rightarrow$ `Flatten(64)` $\rightarrow$ `Linear(64, 256)` $\rightarrow$ `ReLU` $\rightarrow$ `Dropout(0.3)` $\rightarrow$ `Linear(256, 10)`.
    - Tổng tham số: **38,122 tham số** (nhỏ hơn **5.3 lần** so với MLP).
    - Ưu điểm: Tái sử dụng trọng số (weight sharing), trích xuất đặc trưng biên cạnh và hình thái cục bộ.
 
@@ -301,7 +301,7 @@ r"""---
 | `baseline_mlp` | BaselineMLP | 203,530 | 82.16% | 82.07% | 0.8204 | 0.8204 | 192.5s |
 | `exp_cnn_small` | **SimpleCNN** | **38,122** | **84.83%** | **84.75%** | **0.8468** | **0.8468** | 829.9s |
 
-*Nhận xét: SimpleCNN vượt trội hoàn toàn (+2.68% Test Acc) dù số lượng tham số nhẹ hơn 5.3 lần.*
+*Nhận xét: SimpleCNN đạt kết quả cao hơn (+2.68% Test Acc) dù số tham số ít hơn 5.3 lần so với BaselineMLP.*
 
 ---
 ### 4.2 Ma Trận Nhầm Lẫn (Confusion Matrix)
@@ -383,10 +383,9 @@ r"""**So sánh cải tiến F1-score của SimpleCNN so với BaselineMLP:**
     # 10. Error Analysis
     cells.append(nbf.v4.new_markdown_cell(
 r"""---
-## PHẦN 5: PHÂN TÍCH LỖI CHUYÊN SÂU (ERROR ANALYSIS)
-> Một dự án Machine Learning hoàn chỉnh không dừng lại ở con số Accuracy tổng thể, mà phải bóc tách cụ thể các ca đoán sai để hiểu cơ chế thất bại của mô hình.
-
+## PHẦN 5: PHÂN TÍCH LỖI (ERROR ANALYSIS)
 - **Thư viện trực quan hóa:** `matplotlib.pyplot` (vẽ lưới ảnh kích thước 4x4, hiển thị ảnh gốc kèm nhãn True [Xanh lá] và nhãn Pred [Đỏ]).
+- **Mục đích:** Bóc tách các ca phân loại sai để xác định các cặp lớp dễ nhầm lẫn và nguyên nhân gây lỗi.
 """
     ))
 
@@ -461,16 +460,16 @@ if pred_path.exists():
     cells.append(nbf.v4.new_markdown_cell(
 r"""---
 ## PHẦN 7: TỔNG KẾT VÀ KẾT LUẬN
-1. **Hoàn thành trọn vẹn 21 bước Machine Learning / Deep Learning:**
-   - Dữ liệu được kiểm tra toàn vẹn (0 nhãn lỗi, 60K/10K đúng định dạng).
-   - EDA được triển khai độc lập, tính toán chính xác mean ($0.2860$) và std ($0.3530$).
-   - Phân chia tập phân tầng chống rò rỉ dữ liệu tuyệt đối (Stratified 50K train / 10K val / 10K test).
-2. **Minh chứng sức mạnh của kiến trúc Tích chập (CNN):**
-   - Đạt độ chính xác $84.75\%$ trên Test Set, F1-score đạt $0.8468$.
-   - Tối ưu hóa số lượng tham số: chỉ $38,122$ tham số so với $203,530$ tham số của MLP (giảm $81.3\%$ trọng số).
-3. **Mã nguồn chuẩn kỹ nghệ phần mềm:**
-   - Đóng gói package `fashionmnist`, kiểm thử tự động 46/46 test cases passed.
-   - Quản lý cấu hình qua file YAML, tự động lưu trữ checkpoints, biểu đồ và báo cáo chi tiết.
+1. **Xử lý dữ liệu và tiền xử lý:**
+   - Dữ liệu được kiểm tra toàn vẹn (0 nhãn bất thường, 60.000 train / 10.000 test).
+   - EDA tính toán các giá trị chuẩn hóa trên tập train: mean = 0.2860, std = 0.3530.
+   - Phân chia tập phân tầng (Stratified 50.000 train / 10.000 val / 10.000 test), kiểm tra giao hai tập bằng rỗng để tránh rò rỉ dữ liệu.
+2. **Hiệu quả kiến trúc CNN so với MLP:**
+   - SimpleCNN đạt độ chính xác 84.75% trên tập test và F1-score 0.8468 (so với 82.07% và 0.8204 của BaselineMLP).
+   - Số lượng tham số giảm 5.3 lần: 38.122 tham số so với 203.530 của MLP nhờ cơ chế chia sẻ trọng số và Global Average Pooling.
+3. **Tổ chức mã nguồn và kiểm thử:**
+   - Đóng gói package `fashionmnist`, 46 bài kiểm thử tự động với Pytest.
+   - Quản lý siêu tham số bằng tệp YAML, lưu trữ đầy đủ checkpoints, logs và báo cáo kết quả.
 """
     ))
 

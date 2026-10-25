@@ -1,6 +1,6 @@
 # Đồ Án Deep Learning: Phân Loại Ảnh Thời Trang FashionMNIST Bằng PyTorch
 
-Dự án nghiên cứu và triển khai hệ thống phân loại hình ảnh thời trang gồm 10 lớp sử dụng thư viện PyTorch. Dự án được tổ chức theo tiêu chuẩn kỹ nghệ phần mềm chuyên nghiệp, cấu trúc module hóa độc lập, quản lý siêu tham số tập trung qua tệp cấu hình, đảm bảo tính tái lập của thực nghiệm và có hệ thống kiểm thử tự động toàn diện.
+Dự án phân loại hình ảnh thời trang gồm 10 lớp sử dụng PyTorch. Mã nguồn được chia thành các module độc lập, siêu tham số quản lý qua tệp YAML, seed cố định để tái lập kết quả, và có 46 bài kiểm thử tự động bằng Pytest.
 
 ---
 
@@ -19,15 +19,15 @@ Dự án nghiên cứu và triển khai hệ thống phân loại hình ảnh th
   7. Sneaker (Giày thể thao)
   8. Bag (Túi xách)
   9. Ankle boot (Ủng / Bốt cổ thấp)
-- **Phương pháp thực nghiệm:** Thực hiện đối chứng khoa học giữa hai kiến trúc mạng nơ-ron:
-  - Mạng kết nối đầy đủ cơ sở (BaselineMLP - 203.530 tham số).
-  - Mạng tích chập tối ưu (SimpleCNN - 38.122 tham số).
+- **Phương pháp:** So sánh hai kiến trúc mạng nơ-ron:
+  - BaselineMLP (mạng kết nối đầy đủ, 203.530 tham số) làm mốc tham chiếu.
+  - SimpleCNN (mạng tích chập, 38.122 tham số) là mô hình chính.
 
 ---
 
 ## 2. Kiến Trúc Dự Án và Giải Thích Chi Tiết Từng Tệp
 
-Toàn bộ dự án được phân cấp rõ ràng theo các tầng chức năng:
+Cấu trúc thư mục:
 
 ```text
 fashionmnist-deep-learning/
@@ -71,7 +71,7 @@ fashionmnist-deep-learning/
 │   ├── figures/              # Toàn bộ hình ảnh biểu đồ phân tích (.png)
 │   ├── metrics/              # Báo cáo đánh giá chi tiết (.txt, .json)
 │   └── predictions/          # Ảnh kết quả suy luận thực tế (.png)
-└── docs/                     # 8 tài liệu kỹ thuật chuẩn mực (từ 01 đến 08)
+└── docs/                     # 8 tài liệu kỹ thuật (từ 01 đến 08)
 ```
 
 ### 2.1 Thư mục Cấu hình (configs/)
@@ -81,83 +81,78 @@ fashionmnist-deep-learning/
 
 ### 2.2 Thư mục Mã Nguồn Lõi (src/fashionmnist/)
 
-- `src/fashionmnist/__init__.py`: Tệp khởi tạo package Python `fashionmnist`, định nghĩa phiên bản của gói (`__version__ = "1.0.0"`).
-- `src/fashionmnist/config.py`: Đảm nhiệm việc tải, xác thực dữ liệu và kết hợp các tệp cấu hình YAML thành một dictionary hoàn chỉnh phục vụ toàn bộ pipeline.
+- `src/fashionmnist/__init__.py`: Tệp khởi tạo package Python `fashionmnist`.
+- `src/fashionmnist/config.py`: Tải, xác thực và kết hợp các tệp cấu hình YAML thành một dictionary dùng cho toàn bộ pipeline.
 
 #### Phân hệ Dữ liệu (src/fashionmnist/data/)
 - `src/fashionmnist/data/__init__.py`: Khởi tạo module xử lý dữ liệu.
-- `src/fashionmnist/data/dataset.py`: Tải tập dữ liệu FashionMNIST nguyên bản từ `torchvision.datasets` và thực hiện hàm `verify_dataset_integrity()` để kiểm tra độ toàn vẹn: xác nhận số lượng ảnh chính xác (60.000 train, 10.000 test), dải giá trị nhãn hợp lệ trong đoạn $[0, 9]$, không có nhãn bị lỗi hay giá trị NaN.
-- `src/fashionmnist/data/eda.py`: Chứa hàm `run_eda()` thực hiện phân tích khám phá dữ liệu ngay trên dữ liệu thô trước khi chia tập. Hàm tính toán trung bình pixel ($\mu \approx 0.2860$), độ lệch chuẩn pixel ($\sigma \approx 0.3530$), phân phối số lượng mẫu mỗi lớp và kết xuất các đồ thị phân tích.
-- `src/fashionmnist/data/transforms.py`: Định nghĩa các hàm tiền xử lý `get_train_transforms()` và `get_eval_transforms()`. Áp dụng `ToTensor()`, chuẩn hóa Z-score theo channel đơn `(pixel - 0.2860) / 0.3530`, và tăng cường dữ liệu lật ngang ngẫu nhiên (`RandomHorizontalFlip(p=0.5)`) dành riêng cho tập huấn luyện.
-- `src/fashionmnist/data/split.py`: Thực hiện phân chia tập huấn luyện 60.000 ảnh ban đầu thành 50.000 ảnh Train và 10.000 ảnh Validation bằng phương pháp phân tầng (`stratified_split`), đảm bảo mỗi lớp có tỷ lệ phân bố chính xác (5.000 ảnh train và 1.000 ảnh val mỗi lớp). Hàm `verify_no_overlap()` xác thực giao giữa hai tập là tập rỗng nhằm loại bỏ hoàn toàn rủi ro rò rỉ dữ liệu (data leakage). Sau đó, module khởi tạo các DataLoader với `pin_memory=True` và `batch_size` tương ứng.
+- `src/fashionmnist/data/dataset.py`: Tải FashionMNIST từ `torchvision.datasets`. Hàm `verify_dataset_integrity()` kiểm tra số lượng ảnh (60.000 train, 10.000 test), dải nhãn $[0, 9]$ và phát hiện nhãn bất thường.
+- `src/fashionmnist/data/eda.py`: Hàm `run_eda()` phân tích dữ liệu thô trước khi chia tập: tính trung bình pixel ($\mu \approx 0.2860$), độ lệch chuẩn ($\sigma \approx 0.3530$), phân phối mẫu mỗi lớp, và xuất các đồ thị phân tích.
+- `src/fashionmnist/data/transforms.py`: Định nghĩa `get_train_transform()` và `get_eval_transform()`. Train: `RandomHorizontalFlip(p=0.5)` + `RandomCrop(28, padding=4)` + `ToTensor()` + `Normalize(0.2860, 0.3530)`. Eval: `ToTensor()` + `Normalize`.
+- `src/fashionmnist/data/split.py`: Chia 60.000 ảnh train thành 50.000 Train + 10.000 Validation theo stratified split (giữ tỷ lệ lớp). `verify_no_overlap()` kiểm tra giao giữa hai tập bằng rỗng. Sau đó khởi tạo DataLoader.
 
 #### Phân hệ Mô hình (src/fashionmnist/models/)
 - `src/fashionmnist/models/__init__.py`: Khởi tạo module kiến trúc mạng nơ-ron.
 - `src/fashionmnist/models/network.py`: 
-  - `BaselineMLP`: Mô hình mạng nhiều tầng kết nối đầy đủ. Đầu vào ảnh $1 \times 28 \times 28$ được làm phẳng thành vector 784 chiều, đi qua lớp ẩn 256 nơ-ron, hàm kích hoạt ReLU, lớp Dropout và lớp Linear cuối cùng ra 10 lớp ngõ ra (tổng cộng 203.530 tham số).
-  - `SimpleCNN`: Mô hình mạng tích chập gồm 2 khối Conv (Conv2D $1 \rightarrow 32$ và $32 \rightarrow 64$, kernel 3x3, padding 1, ReLU, MaxPool 2x2) giảm kích thước ảnh về $7 \times 7$, tiếp nối bởi lớp Linear 256 nơ-ron, Dropout(0.3) và Linear ra 10 ngõ ra (tổng cộng 38.122 tham số).
-  - `count_parameters()`: Hàm tính toán tổng số lượng tham số có thể huấn luyện của mô hình.
-  - `build_model()`: Hàm Factory xây dựng mô hình dựa trên cấu hình chỉ định.
-  - Quy tắc thiết kế: Cả hai mô hình đều xuất Raw Logits (không đặt Softmax ở lớp cuối) để kết hợp với `nn.CrossEntropyLoss()` của PyTorch, đảm bảo tính ổn định số học và tránh tràn số.
+  - `BaselineMLP`: Flatten(784) → Linear(784, 256) → ReLU → Dropout → Linear(256, 10). Tổng cộng 203.530 tham số.
+  - `SimpleCNN`: 2 khối Conv (1→32→64, kernel 3×3, padding 1, BatchNorm, ReLU, MaxPool 2×2) + GAP + Linear(64, 256) → ReLU → Dropout(0.3) → Linear(256, 10). Tổng cộng 38.122 tham số.
+  - `count_parameters()`: Đếm tổng số tham số trainable.
+  - `build_model()`: Factory khởi tạo mô hình từ cấu hình.
+  - Cả hai mô hình xuất raw logits (không Softmax ở lớp cuối) vì `nn.CrossEntropyLoss()` đã tích hợp log-softmax bên trong.
 
 #### Phân hệ Huấn luyện (src/fashionmnist/training/)
 - `src/fashionmnist/training/__init__.py`: Khởi tạo module huấn luyện.
-- `src/fashionmnist/training/trainer.py`: Điều phối toàn bộ quá trình huấn luyện:
-  - `build_optimizer()`: Khởi tạo bộ tối ưu hóa (Adam hoặc SGD) kèm tham số suy giảm trọng số `weight_decay`.
-  - `build_scheduler()`: Khởi tạo bộ điều chỉnh tốc độ học theo chu kỳ Cosine (`CosineAnnealingLR`) hoặc theo bước (`StepLR`).
-  - `train_one_epoch()`: Thực hiện lan truyền tiến (forward pass), tính hàm mất mát `CrossEntropyLoss`, lan truyền ngược (backward pass), cập nhật trọng số `optimizer.step()`, tính loss trung bình và độ chính xác epoch.
-  - `evaluate_one_epoch()`: Đánh giá mô hình trên tập validation hoặc test dưới chế độ `@torch.no_grad()` và `model.eval()`.
-  - `train()`: Vòng lặp huấn luyện chính, tích hợp cơ chế dừng sớm (Early Stopping) dựa trên số epoch liên tiếp không cải thiện và lưu checkpoint định kỳ.
-- `src/fashionmnist/training/checkpoint.py`: Quản lý lưu trữ trạng thái mô hình (`model_state_dict`), trạng thái bộ tối ưu (`optimizer_state_dict`), số epoch và giá trị accuracy tốt nhất vào tệp `best_model.pt`. Cung cấp hàm nạp checkpoint phục vụ cho việc suy luận hoặc đánh giá độc lập.
+- `src/fashionmnist/training/trainer.py`:
+  - `build_optimizer()`: Khởi tạo Adam hoặc SGD với `weight_decay`.
+  - `build_scheduler()`: Khởi tạo `CosineAnnealingLR` hoặc `StepLR`.
+  - `train_one_epoch()`: Forward → `CrossEntropyLoss` → `loss.backward()` → `optimizer.step()`. Trả về loss trung bình và accuracy.
+  - `evaluate_one_epoch()`: Chạy dưới `@torch.no_grad()` và `model.eval()`, trả về val loss và accuracy.
+  - `train()`: Vòng lặp huấn luyện chính với early stopping và lưu checkpoint định kỳ.
+- `src/fashionmnist/training/checkpoint.py`: Lưu `model_state_dict`, `optimizer_state_dict`, epoch, best metric vào `best_model.pt`. Hàm `load_checkpoint()` nạp lại trạng thái cho inference hoặc tiếp tục huấn luyện.
 
 #### Phân hệ Đánh giá (src/fashionmnist/evaluation/)
 - `src/fashionmnist/evaluation/__init__.py`: Khởi tạo module đánh giá.
-- `src/fashionmnist/evaluation/metrics.py`: Tính toán các thước đo định lượng bao gồm: Accuracy, Macro-averaged F1, Weighted F1, Macro-averaged Precision, Macro-averaged Recall, cùng ma trận nhầm lẫn (Confusion Matrix) dạng số lượng và dạng chuẩn hóa tỉ lệ.
-- `src/fashionmnist/evaluation/error_analysis.py`: Thực hiện bóc tách các trường hợp phân loại sai trên tập kiểm thử, tìm ra các cặp lớp bị nhầm lẫn nhiều nhất kèm số lượng lỗi cụ thể và trích xuất dữ liệu ảnh lỗi phục vụ việc trực quan hóa.
+- `src/fashionmnist/evaluation/metrics.py`: Tính Accuracy, Macro/Weighted F1, Precision, Recall và confusion matrix.
+- `src/fashionmnist/evaluation/error_analysis.py`: Tìm các mẫu phân loại sai, xếp hạng cặp lớp nhầm lẫn nhiều nhất, và xuất lưới ảnh lỗi kèm nhãn thật/dự đoán.
 
 #### Phân hệ Trực quan hóa (src/fashionmnist/visualization/)
 - `src/fashionmnist/visualization/__init__.py`: Khởi tạo module đồ thị.
-- `src/fashionmnist/visualization/plots.py`: Chứa các hàm vẽ đồ thị sử dụng hai thư viện `matplotlib` và `seaborn`:
-  - `plot_class_distribution()`: Vẽ phân phối số lượng mẫu mỗi lớp bằng biểu đồ thanh ngang.
-  - `plot_sample_grid()`: Vẽ ma trận ảnh mẫu kích thước 4x10 từ tập dữ liệu thô.
-  - `plot_pixel_histogram()`: Vẽ biểu đồ phân bố cường độ pixel từ 0.0 đến 1.0.
-  - `plot_class_mean_images()`: Vẽ hình ảnh trung bình đại diện cho từng lớp.
-  - `plot_training_history()`: Vẽ đường cong suy giảm Loss và tăng trưởng Accuracy qua các epoch.
-  - `plot_confusion_matrix()`: Vẽ Heatmap ma trận nhầm lẫn chuẩn hóa và số lượng mẫu.
-  - `plot_per_class_f1()`: Vẽ biểu đồ so sánh chỉ số F1-Score giữa các lớp.
-  - `plot_error_analysis_grid()`: Vẽ lưới các mẫu dự đoán sai kèm nhãn gốc (màu xanh lá) và nhãn dự đoán (màu đỏ).
-  - `plot_predictions()`: Vẽ kết quả dự đoán ngẫu nhiên kèm điểm tin cậy phần trăm.
+- `src/fashionmnist/visualization/plots.py`: Các hàm vẽ đồ thị (`matplotlib` + `seaborn`):
+  - `plot_training_history()`: Đường cong Loss và Accuracy qua các epoch.
+  - `plot_confusion_matrix()`: Heatmap ma trận nhầm lẫn (chuẩn hóa hoặc số lượng).
+  - `plot_per_class_f1()`: Biểu đồ F1-Score từng lớp.
+  - `plot_experiment_comparison()`: So sánh kết quả giữa các thí nghiệm.
 
 #### Phân hệ Tiện ích (src/fashionmnist/utils/)
 - `src/fashionmnist/utils/__init__.py`: Khởi tạo module tiện ích.
-- `src/fashionmnist/utils/reproducibility.py`: Chứa hàm `set_seed()` thiết lập seed cố định cho `random`, `numpy`, `torch` và `torch.cuda`, đồng thời cấu hình `cudnn.deterministic = True` nhằm đảm bảo mọi kết quả thực nghiệm đều có khả năng tái lập bit-for-bit trên CPU. Cung cấp hàm `get_device()` tự động chọn GPU khi khả dụng.
-- `src/fashionmnist/utils/logging.py`: Lưu trữ toàn bộ lịch sử huấn luyện, các giá trị siêu tham số và kết quả đánh giá thành tệp JSON trong thư mục `artifacts/experiments/`.
+- `src/fashionmnist/utils/reproducibility.py`: `set_seed()` cố định seed cho `random`, `numpy`, `torch`, `torch.cuda` và bật `cudnn.deterministic`. `get_device()` tự động chọn GPU nếu có.
+- `src/fashionmnist/utils/logging.py`: Ghi lịch sử huấn luyện, siêu tham số và kết quả đánh giá vào JSON (`artifacts/experiments/`).
 
 ---
 
 ### 2.3 Thư mục Kịch Bản Thực Thi (scripts/)
 
-- `scripts/download_and_eda.py`: Kịch bản thực thi bước 1: tải tập dữ liệu về thư mục `data/raw/`, chạy kiểm tra độ toàn vẹn và tạo toàn bộ biểu đồ EDA trong `artifacts/figures/`.
-- `scripts/train.py`: Kịch bản thực thi bước 2: nhận tham số `--experiment <tên_kịch_bản>` (mặc định là kịch bản trong `configs/experiments.yaml`), xây dựng mô hình, thực hiện huấn luyện, lưu biểu đồ learning curve và lưu checkpoint tối ưu `best_model.pt`.
-- `scripts/evaluate.py`: Kịch bản thực thi bước 3: nạp mô hình tốt nhất từ `best_model.pt`, chạy đánh giá trên 10.000 mẫu của tập kiểm thử độc lập, tạo báo cáo phân loại chi tiết `classification_report.txt`, xuất ma trận nhầm lẫn và biểu đồ phân tích lỗi.
-- `scripts/predict.py`: Kịch bản thực thi bước 4: tải checkpoint đã lưu và chạy thử nghiệm suy luận trên một nhóm ảnh ngẫu nhiên từ tập kiểm thử, lưu kết quả thành tệp ảnh trực quan `artifacts/predictions/`.
-- `scripts/generate_complete_notebook.py`: Kịch bản tự động khởi tạo và cập nhật file Jupyter Notebook `notebooks/fashionmnist_complete_pipeline.ipynb` với đầy đủ mã nguồn, biểu đồ hình ảnh được nhúng sẵn và lời giải thích chi tiết.
+- `scripts/download_and_eda.py`: Tải tập dữ liệu về `data/raw/`, kiểm tra tính toàn vẹn và tạo các biểu đồ EDA vào `artifacts/figures/`.
+- `scripts/train.py`: Nhận `--experiment <tên>`, xây dựng mô hình, huấn luyện, lưu learning curve và `best_model.pt`.
+- `scripts/evaluate.py`: Nạp `best_model.pt`, đánh giá trên 10.000 mẫu test, tạo `classification_report.txt`, confusion matrix và biểu đồ phân tích lỗi.
+- `scripts/predict.py`: Tải checkpoint, chạy suy luận trên ảnh ngẫu nhiên từ tập test, lưu kết quả vào `artifacts/predictions/`.
+- `scripts/generate_complete_notebook.py`: Tạo file `notebooks/fashionmnist_complete_pipeline.ipynb` với mã nguồn, biểu đồ nhúng sẵn và giải thích.
 
 ---
 
 ### 2.4 Thư mục Báo Cáo Thực Nghiệm (notebooks/)
 
-- `notebooks/fashionmnist_complete_pipeline.ipynb`: Tệp sổ tay Jupyter Notebook hoàn chỉnh chứa toàn bộ quy trình từ tải dữ liệu, phân tích khám phá (EDA), so sánh kiến trúc mô hình, biểu đồ đường cong học tập, ma trận nhầm lẫn đến phân tích lỗi chuyên sâu. Tệp đã được xuất kèm hình ảnh đồ thị phân giải cao và diễn giải chi tiết cho từng phần.
+- `notebooks/fashionmnist_complete_pipeline.ipynb`: Notebook tổng hợp gồm EDA, so sánh kiến trúc, learning curves, confusion matrix, phân tích lỗi, kèm hình ảnh nhúng sẵn và giải thích từng phần.
 
 ---
 
 ### 2.5 Thư mục Kiểm Thử Tự Động (tests/)
 
-Toàn bộ hệ thống được bảo đảm bởi 46 bài kiểm thử tự động sử dụng thư viện `pytest`:
-- `tests/test_dataset.py` (17 bài test): Kiểm tra kích thước tập train (60.000), test (10.000), shape ảnh $[1, 28, 28]$, dtype `torch.float32`, dải giá trị $[0.0, 1.0]$, dải nhãn $[0, 9]$, tính đúng đắn của transforms, việc chia tập train/val đúng tỷ lệ 50.000/10.000 và đảm bảo giao giữa hai tập bằng rỗng (không rò rỉ dữ liệu).
-- `tests/test_model.py` (11 bài test): Kiểm tra kích thước ngõ ra logits $[B, 10]$ cho cả BaselineMLP và SimpleCNN, xác nhận không chứa Softmax ngầm ở lớp cuối, kiểm tra tính hữu hạn của giá trị và số lượng tham số mô hình.
-- `tests/test_training.py` (11 bài test): Kiểm tra bộ tối ưu hóa Adam/SGD, lịch trình Cosine Annealing, đảm bảo trọng số được cập nhật sau mỗi bước lan truyền ngược (`loss.backward()` và `optimizer.step()`), kiểm tra việc chuyển đổi chính xác giữa chế độ `model.train()` và `model.eval()`.
-- `tests/test_checkpoint.py` (7 bài test): Kiểm tra tính toàn vẹn khi lưu và nạp `state_dict`, optimizer state, epoch lưu trữ, đảm bảo checkpoint chỉ được cập nhật khi chỉ số validation accuracy thực sự cải thiện.
+46 bài kiểm thử tự động (`pytest`):
+- `tests/test_dataset.py` (17 test): Shape ảnh, dtype, dải nhãn, transforms, kích thước split, giao tập train/val bằng rỗng.
+- `tests/test_model.py` (11 test): Output logits shape $[B, 10]$, không có Softmax ngầm, giá trị hữu hạn, số tham số.
+- `tests/test_training.py` (11 test): Optimizer Adam/SGD, Cosine scheduler, trọng số cập nhật sau backward, chuyển đổi train/eval mode.
+- `tests/test_checkpoint.py` (7 test): Lưu/nạp `state_dict` đúng, optimizer state, checkpoint chỉ cập nhật khi val accuracy cải thiện.
 
 ---
 
@@ -188,24 +183,24 @@ Gồm 8 tài liệu phân tích kỹ thuật:
 
 ### 2.8 Các Tệp Cấu Hình Gốc
 
-- `pyproject.toml`: Khai báo thông tin dự án, cấu hình đóng gói package theo chuẩn PEP 517/518 (sử dụng `setuptools.build_meta`), liệt kê danh sách thư viện phụ thuộc (`torch`, `torchvision`, `numpy`, `matplotlib`, `seaborn`, `scikit-learn`, `pyyaml`, `tqdm`) và cấu hình thực thi cho `pytest`.
-- `.gitignore`: Cấu hình danh sách tệp không theo dõi trên Git: mã nhị phân Python (`__pycache__`), môi trường ảo (`.venv`), dữ liệu thô kích thước lớn (`data/raw/`) và các checkpoint epoch trung gian.
+- `pyproject.toml`: Khai báo package (PEP 517/518, `setuptools`), liệt kê dependencies (`torch`, `torchvision`, `numpy`, `matplotlib`, `seaborn`, `scikit-learn`, `pyyaml`, `tqdm`) và cấu hình `pytest`.
+- `.gitignore`: Loại trừ `__pycache__`, `.venv`, `data/raw/` và checkpoint epoch trung gian.
 
 ---
 
 ## 3. Bảng Kết Quả Thực Nghiệm Đối Chứng
 
-Mô hình tốt nhất được chọn dựa trên **Validation Accuracy** trước khi tiến hành đánh giá trên tập Kiểm thử (Test Set):
+Mô hình được chọn theo **Validation Accuracy**. Test set chỉ dùng cho đánh giá cuối cùng:
 
 | Kịch Bản (Experiment) | Kiến Trúc Mô Hình | Số Tham Số | Val Accuracy | Test Accuracy | Macro F1 | Weighted F1 | Thời Gian Chạy |
 |---|---|---|---|---|---|---|---|
 | `baseline_mlp` | BaselineMLP | 203.530 | 82.16% | 82.07% | 0.8204 | 0.8204 | 192.5s |
 | `exp_cnn_small` | **SimpleCNN** | **38.122** | **84.83%** | **84.75%** | **0.8468** | **0.8468** | 829.9s |
 
-### Nhận xét phân tích kỹ thuật:
-1. **Hiệu quả của phép tích chập:** SimpleCNN đạt độ chính xác cao hơn rõ rệt (+2.68% Test Accuracy, +2.64% F1-score) dù số lượng trọng số nhỏ hơn 5.3 lần so với BaselineMLP. Điều này chứng minh khả năng học các đặc trưng không gian cục bộ (spatial features) và tính chia sẻ trọng số của các bộ lọc tích chập.
-2. **Cải thiện trên các lớp khó:** Lớp `Pullover` (Áo len chui đầu) tăng F1-score từ 68.44% lên 79.20% (+10.76%); lớp `Sneaker` đạt 93.04%; lớp `Sandal` đạt 94.42%.
-3. **Giảm thiểu số lượng lỗi:** Tổng số trường hợp dự đoán sai trên 10.000 mẫu kiểm thử giảm từ 1.793 ca (BaselineMLP) xuống còn 1.525 ca (SimpleCNN), tương đương mức giảm 268 lỗi.
+### Nhận xét:
+1. **CNN vs MLP:** SimpleCNN đạt +2.68% Test Accuracy và +2.64% F1-score so với BaselineMLP, với số tham số nhỏ hơn 5.3 lần. Các lớp tích chập khai thác được đặc trưng không gian cục bộ mà MLP bỏ lỡ khi flatten ảnh thành vector.
+2. **Cải thiện trên các lớp khó:** Pullover tăng F1 từ 68.44% lên 79.20% (+10.76%); Sneaker đạt 93.04%; Sandal đạt 94.42%.
+3. **Số lỗi giảm:** Từ 1.793 (BaselineMLP) xuống 1.525 (SimpleCNN) trên 10.000 mẫu test, giảm 268 lỗi.
 
 ---
 

@@ -17,10 +17,7 @@
 
 ## Kết quả Đánh giá
 
-> *Các số liệu dưới đây sẽ được cập nhật sau khi chạy `scripts/evaluate.py`.*  
-> *Chưa có kết quả thực tế — không bịa số liệu.*
-
-Kết quả thực tế lưu tại:
+Kết quả thực nghiệm trên tập test được lưu tại:
 - `artifacts/metrics/test_metrics_{experiment}.json`
 - `artifacts/metrics/classification_report_{experiment}.txt`
 

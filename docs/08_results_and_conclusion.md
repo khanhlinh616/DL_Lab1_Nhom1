@@ -2,9 +2,6 @@
 
 ## Bảng So sánh Mô hình
 
-> *Bảng sẽ được điền sau khi các thí nghiệm hoàn tất.*  
-> *Chưa có số liệu thực tế từ việc chạy — không ghi kết quả giả.*
-
 | Experiment | Architecture | Val Acc | Test Acc | F1 (weighted) | Params | Time (s) |
 |---|---|---|---|---|---|---|
 | baseline_mlp | BaselineMLP | 0.8216 | 0.8207 | 0.8204 | 203,530 | 192.5 |
@@ -27,8 +24,8 @@ Chi tiết được lưu trữ tại:
 ## Nhận xét Thực tế
 
 1. **Hiệu quả cấu trúc tích chập (CNN):**
-   - SimpleCNN vượt trội hoàn toàn BaselineMLP dù số tham số ít hơn 5 lần, chứng minh khả năng trích xuất đặc trưng không gian (spatial hierarchy) vượt trội của Conv2D.
-   - Lớp **Pullover** tăng vọt F1-score từ **68.44% → 79.20% (+10.76%)**.
+   - SimpleCNN cho kết quả cao hơn BaselineMLP (+2.68% Test Acc, +2.64% F1) dù số tham số ít hơn 5.3 lần. Các lớp tích chập giữ được quan hệ không gian 2D cục bộ thay vì dàn phẳng thành vector như MLP.
+   - Lớp **Pullover** tăng F1-score từ **68.44% → 79.20% (+10.76%)**.
    - Lớp **Sneaker** tăng từ **87.81% → 93.04%**, **Sandal** từ **90.56% → 94.42%**.
 
 2. **Lớp dễ nhận diện nhất (F1 > 94%):**
