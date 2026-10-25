@@ -165,14 +165,14 @@ def _plot_raw_class_distribution(
     ax.set_yticks(y)
     ax.set_yticklabels(_CLASS_NAMES, fontsize=9)
     ax.invert_yaxis()
-    ax.set_xlabel("Số lượng mẫu (samples)", fontsize=10)
-    ax.set_title(f"FashionMNIST — Phân phối dữ liệu thô trước khi chia tập (Tổng: {total:,} mẫu Train thô)", fontsize=11, pad=10)
+    ax.set_xlabel("Number of samples", fontsize=10)
+    ax.set_title(f"FashionMNIST — Raw Data Distribution Before Split (Total: {total:,} training samples)", fontsize=11, pad=10)
     ax.set_xlim(0, max(counts) * 1.25)
 
     for bar in bars:
         w = bar.get_width()
         pct = (w / total) * 100
-        ax.text(w + 100, bar.get_y() + bar.get_height() / 2, f"{int(w):,} mẫu ({pct:.1f}%)",
+        ax.text(w + 100, bar.get_y() + bar.get_height() / 2, f"{int(w):,} ({pct:.1f}%)",
                 va="center", ha="left", fontsize=9, fontweight="bold", color="#1c3d5a")
 
     ax.grid(axis="x", linestyle="--", alpha=0.5)
@@ -215,14 +215,14 @@ def _plot_split_distribution(
     width = 0.26
 
     fig, ax = plt.subplots(figsize=(13, 5), dpi=150)
-    bars_train = ax.bar(x - width, train_split_counts, width, label="Tập Train sau chia (50.000 mẫu)", color="#2b5c8f", alpha=0.9)
-    bars_val = ax.bar(x, val_split_counts, width, label="Tập Validation sau chia (10.000 mẫu)", color="#2a9d8f", alpha=0.9)
-    bars_test = ax.bar(x + width, test_counts, width, label="Tập Test độc lập (10.000 mẫu)", color="#e76f51", alpha=0.9)
+    bars_train = ax.bar(x - width, train_split_counts, width, label="Train split (50,000)", color="#2b5c8f", alpha=0.9)
+    bars_val = ax.bar(x, val_split_counts, width, label="Validation split (10,000)", color="#2a9d8f", alpha=0.9)
+    bars_test = ax.bar(x + width, test_counts, width, label="Test set (10,000)", color="#e76f51", alpha=0.9)
 
     ax.set_xticks(x)
     ax.set_xticklabels(_CLASS_NAMES, rotation=25, ha="right", fontsize=9)
-    ax.set_ylabel("Số lượng mẫu", fontsize=10)
-    ax.set_title("FashionMNIST — Đối chiếu phân chia tập phân tầng (Stratified Split)", fontsize=11, pad=10)
+    ax.set_ylabel("Number of samples", fontsize=10)
+    ax.set_title("FashionMNIST — Stratified Split Distribution", fontsize=11, pad=10)
     ax.legend(frameon=True, facecolor="white", edgecolor="#cccccc")
     ax.bar_label(bars_train, padding=2, fontsize=7)
     ax.bar_label(bars_val, padding=2, fontsize=7)
@@ -371,11 +371,11 @@ def _plot_class_mean_images(
 def _print_eda_summary(stats: dict[str, Any]) -> None:
     """Print a concise EDA summary to stdout."""
     print("\n" + "=" * 55)
-    print("EDA SUMMARY — FashionMNIST")
+    print("EDA SUMMARY - FashionMNIST")
     print("=" * 55)
     print(f"  Train samples : {stats['train_samples']:,}")
     print(f"  Test samples  : {stats['test_samples']:,}")
-    print(f"  Image shape   : {stats['image_shape']} (C×H×W)")
+    print(f"  Image shape   : {stats['image_shape']} (C x H x W)")
     print(f"  Pixel mean    : {stats['pixel_mean_train']:.4f}")
     print(f"  Pixel std     : {stats['pixel_std_train']:.4f}")
     print(f"  Pixel range   : [{stats['pixel_min_train']:.4f}, {stats['pixel_max_train']:.4f}]")

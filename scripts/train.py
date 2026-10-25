@@ -42,7 +42,7 @@ def main() -> None:
     experiment_name = args.experiment or "default"
 
     print("=" * 60)
-    print(f"FashionMNIST Training — Experiment: '{experiment_name}'")
+    print(f"FashionMNIST Training - Experiment: '{experiment_name}'")
     print("=" * 60)
 
     # ── Config ────────────────────────────────────────────────────────────────

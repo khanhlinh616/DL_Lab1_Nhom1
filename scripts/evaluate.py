@@ -65,7 +65,7 @@ def main() -> None:
     experiment_name = args.experiment
 
     print("=" * 60)
-    print(f"FashionMNIST Evaluation — Experiment: '{experiment_name}'")
+    print(f"FashionMNIST Evaluation - Experiment: '{experiment_name}'")
     print("=" * 60)
 
     cfg = load_config(experiment_name=(None if experiment_name == "default" else experiment_name))

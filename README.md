@@ -20,7 +20,7 @@ Dự án xây dựng và đánh giá hệ thống phân loại hình ảnh thờ
   - `8`: Bag (Túi xách)
   - `9`: Ankle boot (Ủng / Bốt cổ thấp)
 - **Mô hình đối chứng:**
-  - **BaselineMLP:** 203.530 tham số (Flatten 784 $\rightarrow$ Linear 256 $\rightarrow$ ReLU $\rightarrow$ Linear 10).
+  - **BaselineMLP:** 203.530 tham số (Flatten 784 → Linear 256 → ReLU → Linear 10).
   - **SimpleCNN:** 38.122 tham số (2 Conv Blocks + BatchNorm + MaxPool + Global Average Pooling + Linear 256 + Dropout 0.3 + Linear 10).
 
 ---
@@ -73,8 +73,7 @@ fashionmnist-deep-learning/
 │   ├── evaluation/                     # Module đánh giá và phân tích sai số
 │   │   ├── __init__.py
 │   │   ├── metrics.py                  # Tính Accuracy, Precision, Recall, Macro/Weighted F1, CM
-│   │   ├── error_analysis.py           # Bóc tách mẫu đoán sai và xếp hạng cặp lớp nhầm lẫn
-│   │   └── errors.py                   # Module alias tương thích ngược cho error_analysis
+│   │   └── error_analysis.py           # Bóc tách mẫu đoán sai và xếp hạng cặp lớp nhầm lẫn
 │   ├── visualization/                  # Module trực quan hóa
 │   │   ├── __init__.py
 │   │   └── plots.py                    # Biểu đồ EDA, learning curves, confusion matrix, error grid
@@ -93,7 +92,8 @@ fashionmnist-deep-learning/
     ├── experiments/                    # Nhật ký lịch sử huấn luyện chi tiết theo từng epoch (.json)
     ├── figures/                        # Toàn bộ biểu đồ phân tích trực quan độ phân giải cao (.png)
     ├── metrics/                        # Báo cáo đánh giá phân loại định lượng (.txt, .json)
-    └── predictions/                    # Ảnh trực quan hóa kết quả suy luận thực tế (.png)
+    ├── predictions/                    # Ảnh trực quan hóa kết quả suy luận thực tế (.png)
+    └── reports/                        # Báo cáo kỹ thuật tổng kết nghiệm thu dự án (.md)
 ```
 
 ---
@@ -157,11 +157,11 @@ Dựa trên ma trận nhầm lẫn của mô hình `SimpleCNN`, 5 cặp lớp x�
 
 | Cặp Lớp Nhầm Lẫn | Số Lượng Lỗi | Nguyên Nhân Kỹ Thuật |
 |---|---|---|
-| `Shirt` $\rightarrow$ `T-shirt/top` | 176 mẫu | Cấu trúc thân áo tương đồng; ở độ phân giải $28 \times 28$ grayscale, cúc áo và đường xẻ cổ áo sơ mi bị tiêu biến |
-| `Coat` $\rightarrow$ `Shirt` | 124 mẫu | Áo khoác mở vạt trước tạo viền cổ chữ V tương tự áo sơ mi phanh ngực |
-| `Pullover` $\rightarrow$ `Shirt` | 106 mẫu | Áo len dài tay có chiều dài thân và tay áo tương đương áo sơ mi |
-| `Shirt` $\rightarrow$ `Coat` | 105 mẫu | Thiếu thông tin về độ dày chất liệu vải và màu sắc ở ảnh grayscale |
-| `Coat` $\rightarrow$ `Pullover` | 105 mẫu | Thiếu độ tương phản bề mặt chất liệu dạ/len |
+| `Shirt` → `T-shirt/top` | 176 mẫu | Cấu trúc thân áo tương đồng; ở độ phân giải 28×28 grayscale, cúc áo và đường xẻ cổ áo sơ mi bị tiêu biến |
+| `Coat` → `Shirt` | 124 mẫu | Áo khoác mở vạt trước tạo viền cổ chữ V tương tự áo sơ mi phanh ngực |
+| `Pullover` → `Shirt` | 106 mẫu | Áo len dài tay có chiều dài thân và tay áo tương đương áo sơ mi |
+| `Shirt` → `Coat` | 105 mẫu | Thiếu thông tin về độ dày chất liệu vải và màu sắc ở ảnh grayscale |
+| `Coat` → `Pullover` | 105 mẫu | Thiếu độ tương phản bề mặt chất liệu dạ/len |
 
 Ngược lại, các lớp có hình thái biên dạng đặc thù đạt độ chính xác cao: `Trouser` (F1: 97.05%), `Bag` (F1: 96.04%), `Sandal` (F1: 94.42%), `Ankle boot` (F1: 94.16%).
 
@@ -179,4 +179,5 @@ Ngược lại, các lớp có hình thái biên dạng đặc thù đạt độ
 | [06_evaluation_and_error_analysis.md](file:///c:/Project/DL/fashionmnist-deep-learning/docs/06_evaluation_and_error_analysis.md) | Phương pháp luận đánh giá, confusion matrix và phân tích lỗi |
 | [07_reproducibility_and_limitations.md](file:///c:/Project/DL/fashionmnist-deep-learning/docs/07_reproducibility_and_limitations.md) | Cấu hình tái lập (seed 42), môi trường thử nghiệm và giới hạn |
 | [08_results_and_conclusion.md](file:///c:/Project/DL/fashionmnist-deep-learning/docs/08_results_and_conclusion.md) | Bảng tổng hợp số liệu thực nghiệm đối chứng và kết luận |
+| [final_evaluation_report.md](file:///c:/Project/DL/fashionmnist-deep-learning/artifacts/reports/final_evaluation_report.md) | Báo cáo kỹ thuật tổng kết nghiệm thu dự án |
 | [fashionmnist_complete_pipeline.ipynb](file:///c:/Project/DL/fashionmnist-deep-learning/notebooks/fashionmnist_complete_pipeline.ipynb) | Sổ tay thực nghiệm hoàn chỉnh kèm biểu đồ nhúng trực quan |

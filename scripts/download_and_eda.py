@@ -14,13 +14,22 @@ from pathlib import Path
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_PROJECT_ROOT / "src"))
 
+import argparse
 from fashionmnist.config import load_config
 from fashionmnist.data.dataset import load_raw_dataset, verify_dataset_integrity
 from fashionmnist.data.eda import run_eda
 from fashionmnist.utils.reproducibility import set_seed, reproducibility_info
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Download FashionMNIST dataset and run Exploratory Data Analysis (EDA)"
+    )
+    return parser.parse_args()
+
+
 def main() -> None:
+    _ = parse_args()
     cfg = load_config()
     seed = cfg["project"]["seed"]
     set_seed(seed)
@@ -30,7 +39,7 @@ def main() -> None:
     figures_dir = cfg["paths"]["figures_dir"]
 
     print("=" * 55)
-    print("FashionMNIST — Download & EDA")
+    print("FashionMNIST - Download & EDA")
     print("=" * 55)
 
     info = reproducibility_info(seed)

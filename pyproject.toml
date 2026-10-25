@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "fashionmnist-deep-learning"
 version = "1.0.0"
-description = "FashionMNIST image classification using PyTorch — 21-step ML pipeline"
+description = "FashionMNIST image classification with PyTorch - MLP vs CNN comparison"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
