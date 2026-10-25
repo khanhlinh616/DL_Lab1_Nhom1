@@ -99,51 +99,72 @@ print(f"[Env] CUDA Available   : {torch.cuda.is_available()}")
 """
     ))
 
-    # 3. EDA - Data Distribution
+    # 3. EDA - Raw Data Distribution Before Split
     cells.append(nbf.v4.new_markdown_cell(
 r"""---
 ## PHẦN 1: KHÁM PHÁ VÀ TRỰC QUAN HÓA DỮ LIỆU (EDA)
 > **Nguyên tắc cốt lõi:** Thực hiện EDA ngay sau khi tải dữ liệu thô, **trước khi chia tập (split)** và trước khi tiền xử lý, nhằm tránh rò rỉ dữ liệu (data leakage) và hiểu rõ bản chất phân phối của dữ liệu thời trang.
 
-### 1.1 Phân Phối Các Lớp (Class Distribution)
-- **Thư viện trực quan hóa:** `matplotlib.pyplot` (vẽ biểu đồ thanh ngang `barh` và nhãn số lượng mẫu).
-- **Mục đích:** Kiểm tra tính cân bằng giữa các lớp trong tập dữ liệu.
+### 1.1 Phân Phối Dữ Liệu Thô Trước Khi Chia Tập (Raw Dataset Before Split)
+- **Thư viện trực quan hóa:** `matplotlib.pyplot` (biểu đồ thanh ngang `barh` hiển thị số lượng mẫu và tỷ lệ phần trăm cho từng lớp).
+- **Mục đích:** Khảo sát toàn bộ dữ liệu thô ban đầu (60.000 mẫu Train thô) để xác nhận tính cân bằng trước khi thực hiện bất kỳ phép biến đổi nào.
 """
     ))
 
-    code_dist = nbf.v4.new_code_cell(
-r"""# Hiển thị trực quan hóa phân phối lớp (Class Distribution)
-img_dist_path = PROJECT_ROOT / "artifacts" / "figures" / "eda_class_distribution.png"
-if img_dist_path.exists():
-    img_dist = Image.open(img_dist_path)
+    code_raw_dist = nbf.v4.new_code_cell(
+r"""# Hiển thị trực quan hóa phân phối dữ liệu thô trước khi chia tập
+img_raw_path = PROJECT_ROOT / "artifacts" / "figures" / "eda_raw_class_distribution.png"
+if img_raw_path.exists():
     plt.figure(figsize=(10, 5), dpi=150)
-    plt.imshow(img_dist)
+    plt.imshow(Image.open(img_raw_path))
     plt.axis("off")
-    plt.title("Biểu đồ phân phối 10 lớp của FashionMNIST (Train vs Test)", fontsize=13, pad=12)
+    plt.title("Phân phối dữ liệu thô ban đầu (60.000 mẫu Train thô)", fontsize=12, pad=10)
     plt.show()
-else:
-    print("Vui lòng chạy 'py -3 scripts/download_and_eda.py' trước để tạo đồ thị.")
 """
     )
-    out_dist = create_image_output(FIGURES_DIR / "eda_class_distribution.png")
-    if out_dist:
-        code_dist.outputs = [out_dist]
-    cells.append(code_dist)
+    out_raw_dist = create_image_output(FIGURES_DIR / "eda_raw_class_distribution.png")
+    if out_raw_dist:
+        code_raw_dist.outputs = [out_raw_dist]
+    cells.append(code_raw_dist)
 
     cells.append(nbf.v4.new_markdown_cell(
-r"""**Giải thích và Nhận xét về Biểu đồ Phân phối Lớp:**
-1. **Đặc điểm phân phối:**
-   - Tập huấn luyện (Train) gồm **60,000 mẫu**, chia đều cho 10 lớp: mỗi lớp có đúng **6,000 mẫu** (10.0%).
-   - Tập kiểm thử (Test) gồm **10,000 mẫu**, chia đều mỗi lớp đúng **1,000 mẫu** (10.0%).
-2. **Quyết định kỹ thuật rút ra:**
-   - Dữ liệu **hoàn toàn cân bằng (balanced dataset)**, do đó không cần kỹ thuật Oversampling, Undersampling (như SMOTE) hay Class-Weighted Loss.
-   - Thước đo **Accuracy** là hợp lệ, tuy nhiên vẫn cần kết hợp **Macro F1-score** để giám sát kỹ từng lớp riêng lẻ.
+r"""### 1.2 Đối Chiếu Phân Chia Tập Phân Tầng (Stratified Split Verification)
+- **Thư viện trực quan hóa:** `matplotlib.pyplot` (biểu đồ cột nhóm so sánh số lượng mẫu của từng lớp trên cả 3 tập con).
+- **Mục đích:** Kiểm chứng tính phân tầng của thuật toán chia tập: 60.000 mẫu thô được tách thành **50.000 Train** (83.3%) và **10.000 Validation** (16.7%), đối chiếu với **10.000 Test** độc lập. Tỷ lệ các lớp được bảo toàn đồng đều mà không làm sai lệch phân phối.
+"""
+    ))
+
+    code_split_dist = nbf.v4.new_code_cell(
+r"""# Hiển thị đối chiếu phân phối các tập sau khi chia phân tầng (Train 50k / Val 10k / Test 10k)
+img_split_path = PROJECT_ROOT / "artifacts" / "figures" / "dataset_split_distribution.png"
+if img_split_path.exists():
+    plt.figure(figsize=(12, 5), dpi=150)
+    plt.imshow(Image.open(img_split_path))
+    plt.axis("off")
+    plt.title("Đối chiếu phân phối các tập sau chia phân tầng", fontsize=12, pad=10)
+    plt.show()
+"""
+    )
+    out_split_dist = create_image_output(FIGURES_DIR / "dataset_split_distribution.png")
+    if out_split_dist:
+        code_split_dist.outputs = [out_split_dist]
+    cells.append(code_split_dist)
+
+    cells.append(nbf.v4.new_markdown_cell(
+r"""**Nhận xét phân phối dữ liệu trước và sau khi chia:**
+1. **Dữ liệu thô trước khi chia:** Tập huấn luyện gốc gồm đúng **60,000 mẫu**, chia đều tuyệt đối cho 10 lớp, mỗi lớp có đúng **6,000 mẫu (10.0%)**.
+2. **Sau khi chia phân tầng (Stratified Split):**
+   - **Tập Train (50,000 mẫu):** Mỗi lớp có đúng **5,000 mẫu** (10.0%).
+   - **Tập Validation (10,000 mẫu):** Mỗi lớp có đúng **1,000 mẫu** (10.0%).
+   - **Tập Test độc lập (10,000 mẫu):** Mỗi lớp có đúng **1,000 mẫu** (10.0%).
+3. **Ý nghĩa kỹ thuật:** Do phân phối hoàn toàn cân bằng, không cần áp dụng các kỹ thuật cân bằng dữ liệu như SMOTE hay Class-Weighted Loss. Thước đo **Accuracy** phản ánh đúng độ bao quát, đi kèm **Macro F1-score** để theo dõi hiệu năng từng lớp riêng biệt.
 """
     ))
 
     # 4. EDA - Sample Grid
+    # 4. EDA - Sample Grid
     cells.append(nbf.v4.new_markdown_cell(
-r"""### 1.2 Trực Quan Hóa Lưới Mẫu Ảnh Thời Trang (Sample Grid)
+r"""### 1.3 Trực Quan Hóa Lưới Mẫu Ảnh Thời Trang (Sample Grid)
 - **Thư viện trực quan hóa:** `matplotlib.pyplot` (sắp xếp ma trận ô `subplot(4, 10)` hiển thị ảnh grayscale `cmap='gray'`).
 - **Mục đích:** Quan sát trực quan hình thái, độ tương phản và hình dạng của từng loại trang phục thực tế.
 """
@@ -177,7 +198,7 @@ r"""**Giải thích và Nhận xét về Lưới Mẫu:**
 
     # 5. EDA - Pixel Intensity & Class Mean
     cells.append(nbf.v4.new_markdown_cell(
-r"""### 1.3 Phân Tích Phổ Cường Độ Pixel và Khuôn Mẫu Trung Bình Từng Lớp
+r"""### 1.4 Phân Tích Phổ Cường Độ Pixel và Khuôn Mẫu Trung Bình Từng Lớp
 - **Thư viện trực quan hóa:** `matplotlib.pyplot` (vẽ đường histogram phân bố mật độ pixel và lưới 2x5 ảnh trung bình pixel mỗi lớp).
 - **Mục đích:** Tìm hiểu thông số mean/std phục vụ chuẩn hóa Z-score, và xem hình bóng trung bình (average template) của từng lớp.
 """

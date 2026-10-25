@@ -55,8 +55,14 @@ def run_eda(
     print("[EDA] Computing dataset statistics...")
     stats = _compute_statistics(train_ds, test_ds)
 
-    print("[EDA] Plotting class distribution...")
+    print("[EDA] Plotting raw class distribution before split...")
+    _plot_raw_class_distribution(train_ds, figures_dir)
+
+    print("[EDA] Plotting class distribution (Train vs Test)...")
     _plot_class_distribution(train_ds, test_ds, figures_dir)
+
+    print("[EDA] Plotting post-split distribution (Train 50k / Val 10k / Test 10k)...")
+    _plot_split_distribution(train_ds, test_ds, figures_dir)
 
     print("[EDA] Plotting sample grid...")
     _plot_sample_grid(train_ds, figures_dir)
@@ -70,7 +76,7 @@ def run_eda(
     stats_path = eda_dir / "eda_statistics.json"
     with stats_path.open("w", encoding="utf-8") as f:
         json.dump(stats, f, indent=2)
-    print(f"[EDA] Statistics saved → {stats_path}")
+    print(f"[EDA] Statistics saved -> {stats_path}")
 
     _print_eda_summary(stats)
     return stats
@@ -140,6 +146,97 @@ def _compute_statistics(
 # Plots
 # ---------------------------------------------------------------------------
 
+def _plot_raw_class_distribution(
+    train_ds: datasets.FashionMNIST,
+    figures_dir: Path,
+) -> None:
+    """Horizontal bar chart of raw dataset class distribution before any split (60,000 samples)."""
+    train_labels = train_ds.targets
+    if not isinstance(train_labels, torch.Tensor):
+        train_labels = torch.tensor(train_labels)
+
+    counts = [(train_labels == i).sum().item() for i in range(10)]
+    total = sum(counts)
+
+    fig, ax = plt.subplots(figsize=(10, 5), dpi=150)
+    y = np.arange(10)
+    bars = ax.barh(y, counts, color="#2b5c8f", alpha=0.85, height=0.6)
+
+    ax.set_yticks(y)
+    ax.set_yticklabels(_CLASS_NAMES, fontsize=9)
+    ax.invert_yaxis()
+    ax.set_xlabel("Số lượng mẫu (samples)", fontsize=10)
+    ax.set_title(f"FashionMNIST — Phân phối dữ liệu thô trước khi chia tập (Tổng: {total:,} mẫu Train thô)", fontsize=11, pad=10)
+    ax.set_xlim(0, max(counts) * 1.25)
+
+    for bar in bars:
+        w = bar.get_width()
+        pct = (w / total) * 100
+        ax.text(w + 100, bar.get_y() + bar.get_height() / 2, f"{int(w):,} mẫu ({pct:.1f}%)",
+                va="center", ha="left", fontsize=9, fontweight="bold", color="#1c3d5a")
+
+    ax.grid(axis="x", linestyle="--", alpha=0.5)
+    plt.tight_layout()
+    out_path = figures_dir / "eda_raw_class_distribution.png"
+    plt.savefig(out_path, dpi=150, bbox_inches="tight")
+    plt.close()
+    print(f"[EDA] Saved -> {out_path}")
+
+
+def _plot_split_distribution(
+    train_ds: datasets.FashionMNIST,
+    test_ds: datasets.FashionMNIST,
+    figures_dir: Path,
+    val_fraction: float = 0.16666666666666666,
+    seed: int = 42,
+) -> None:
+    """Grouped bar chart showing sample counts per class across Train (50k), Val (10k), and Test (10k)."""
+    train_labels = train_ds.targets
+    test_labels = test_ds.targets
+    if not isinstance(train_labels, torch.Tensor):
+        train_labels = torch.tensor(train_labels)
+    if not isinstance(test_labels, torch.Tensor):
+        test_labels = torch.tensor(test_labels)
+
+    labels_np = train_labels.numpy()
+    rng = np.random.default_rng(seed=seed)
+    train_split_counts = [0] * 10
+    val_split_counts = [0] * 10
+    test_counts = [(test_labels == i).sum().item() for i in range(10)]
+
+    for cls in range(10):
+        cls_idx = np.where(labels_np == cls)[0]
+        rng.shuffle(cls_idx)
+        n_val = max(1, int(len(cls_idx) * val_fraction))
+        val_split_counts[cls] = n_val
+        train_split_counts[cls] = len(cls_idx) - n_val
+
+    x = np.arange(10)
+    width = 0.26
+
+    fig, ax = plt.subplots(figsize=(13, 5), dpi=150)
+    bars_train = ax.bar(x - width, train_split_counts, width, label="Tập Train sau chia (50.000 mẫu)", color="#2b5c8f", alpha=0.9)
+    bars_val = ax.bar(x, val_split_counts, width, label="Tập Validation sau chia (10.000 mẫu)", color="#2a9d8f", alpha=0.9)
+    bars_test = ax.bar(x + width, test_counts, width, label="Tập Test độc lập (10.000 mẫu)", color="#e76f51", alpha=0.9)
+
+    ax.set_xticks(x)
+    ax.set_xticklabels(_CLASS_NAMES, rotation=25, ha="right", fontsize=9)
+    ax.set_ylabel("Số lượng mẫu", fontsize=10)
+    ax.set_title("FashionMNIST — Đối chiếu phân chia tập phân tầng (Stratified Split)", fontsize=11, pad=10)
+    ax.legend(frameon=True, facecolor="white", edgecolor="#cccccc")
+    ax.bar_label(bars_train, padding=2, fontsize=7)
+    ax.bar_label(bars_val, padding=2, fontsize=7)
+    ax.bar_label(bars_test, padding=2, fontsize=7)
+    ax.set_ylim(0, max(train_split_counts) * 1.18)
+    ax.grid(axis="y", linestyle="--", alpha=0.4)
+
+    plt.tight_layout()
+    out_path = figures_dir / "dataset_split_distribution.png"
+    plt.savefig(out_path, dpi=150, bbox_inches="tight")
+    plt.close()
+    print(f"[EDA] Saved -> {out_path}")
+
+
 def _plot_class_distribution(
     train_ds: datasets.FashionMNIST,
     test_ds: datasets.FashionMNIST,
@@ -176,7 +273,7 @@ def _plot_class_distribution(
     out_path = figures_dir / "eda_class_distribution.png"
     plt.savefig(out_path, dpi=120, bbox_inches="tight")
     plt.close()
-    print(f"[EDA] Saved → {out_path}")
+    print(f"[EDA] Saved -> {out_path}")
 
 
 def _plot_sample_grid(
@@ -212,7 +309,7 @@ def _plot_sample_grid(
     out_path = figures_dir / "eda_sample_grid.png"
     plt.savefig(out_path, dpi=120, bbox_inches="tight")
     plt.close()
-    print(f"[EDA] Saved → {out_path}")
+    print(f"[EDA] Saved -> {out_path}")
 
 
 def _plot_pixel_histogram(
@@ -240,7 +337,7 @@ def _plot_pixel_histogram(
     out_path = figures_dir / "eda_pixel_histogram.png"
     plt.savefig(out_path, dpi=120, bbox_inches="tight")
     plt.close()
-    print(f"[EDA] Saved → {out_path}")
+    print(f"[EDA] Saved -> {out_path}")
 
 
 def _plot_class_mean_images(
@@ -268,7 +365,7 @@ def _plot_class_mean_images(
     out_path = figures_dir / "eda_class_mean_images.png"
     plt.savefig(out_path, dpi=120, bbox_inches="tight")
     plt.close()
-    print(f"[EDA] Saved → {out_path}")
+    print(f"[EDA] Saved -> {out_path}")
 
 
 def _print_eda_summary(stats: dict[str, Any]) -> None:
@@ -286,6 +383,6 @@ def _print_eda_summary(stats: dict[str, Any]) -> None:
     print(f"  Invalid labels (test) : {stats['invalid_labels_test']}")
     print("\n  Train class distribution:")
     for cls_name, count in stats["train_class_counts"].items():
-        bar = "█" * (count // 1000)
+        bar = "#" * (count // 1000)
         print(f"    {cls_name:15s}: {count:5d}  {bar}")
     print("=" * 55 + "\n")

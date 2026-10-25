@@ -41,10 +41,12 @@ Script: `scripts/download_and_eda.py`
 - **Pixel std (train):** ~0.3530 — độ tương phản cao
 - **Phân bố lớp:** hoàn toàn cân bằng, không cần xử lý class imbalance
 - **Invalid labels:** 0 (cả train và test)
-- **Nhận xét:** Shirt và T-shirt/top có ngoại hình tương tự → dễ nhầm lẫn; Trouser và Bag rất đặc trưng → dự kiến F1 cao
+- **Nhận xét:** Shirt và T-shirt/top có ngoại hình tương tự -> dễ nhầm lẫn; Trouser và Bag rất đặc trưng -> dự kiến F1 cao
 
 **Artifacts tạo ra:**
 - `artifacts/eda/eda_statistics.json`
+- `artifacts/figures/eda_raw_class_distribution.png`
+- `artifacts/figures/dataset_split_distribution.png`
 - `artifacts/figures/eda_class_distribution.png`
 - `artifacts/figures/eda_sample_grid.png`
 - `artifacts/figures/eda_pixel_histogram.png`
