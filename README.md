@@ -31,67 +31,47 @@ Toàn bộ dự án được phân cấp rõ ràng theo các tầng chức năng
 
 ```text
 fashionmnist-deep-learning/
-├── configs/
-│   ├── default.yaml
-│   └── experiments.yaml
-├── src/fashionmnist/
-│   ├── __init__.py
-│   ├── config.py
-│   ├── data/
-│   │   ├── __init__.py
-│   │   ├── dataset.py
-│   │   ├── eda.py
-│   │   ├── transforms.py
-│   │   └── split.py
-│   ├── models/
-│   │   ├── __init__.py
-│   │   └── network.py
-│   ├── training/
-│   │   ├── __init__.py
-│   │   ├── trainer.py
-│   │   └── checkpoint.py
-│   ├── evaluation/
-│   │   ├── __init__.py
-│   │   ├── metrics.py
-│   │   └── error_analysis.py
-│   ├── visualization/
-│   │   ├── __init__.py
-│   │   └── plots.py
-│   └── utils/
-│       ├── __init__.py
-│       ├── reproducibility.py
-│       └── logging.py
-├── scripts/
-│   ├── download_and_eda.py
-│   ├── train.py
-│   ├── evaluate.py
-│   ├── predict.py
-│   └── generate_complete_notebook.py
-├── notebooks/
-│   └── fashionmnist_complete_pipeline.ipynb
-├── tests/
-│   ├── test_dataset.py
-│   ├── test_model.py
-│   ├── test_training.py
-│   └── test_checkpoint.py
-├── artifacts/
-│   ├── checkpoints/
-│   ├── eda/
-│   ├── experiments/
-│   ├── figures/
-│   ├── metrics/
-│   └── predictions/
-├── docs/
-│   ├── 01_project_overview.md
-│   ├── 02_dataset_and_eda.md
-│   ├── 03_preprocessing_and_splitting.md
-│   ├── 04_model_architecture.md
-│   ├── 05_training_and_experiments.md
-│   ├── 06_evaluation_and_error_analysis.md
-│   ├── 07_reproducibility_and_limitations.md
-│   └── 08_results_and_conclusion.md
-├── pyproject.toml
-└── .gitignore
+├── configs/                  # Quản lý siêu tham số và thí nghiệm
+│   ├── default.yaml          # Cấu hình gốc (mặc định)
+│   └── experiments.yaml      # Cấu hình ghi đè cho từng thí nghiệm (MLP, CNN, LR, Batch size)
+├── src/fashionmnist/         # Core Library (gói mã nguồn chính)
+│   ├── config.py             # Đọc và validate cấu hình YAML
+│   ├── data/                 # Module xử lý dữ liệu và tiền xử lý
+│   │   ├── dataset.py        # Tải FashionMNIST và kiểm tra tính toàn vẹn
+│   │   ├── eda.py            # Phân tích khám phá dữ liệu (EDA) trước khi chia tập
+│   │   ├── transforms.py     # Pipeline chuẩn hóa (ToTensor, Normalize, Augmentation)
+│   │   └── split.py          # Stratified split và khởi tạo DataLoader
+│   ├── models/               # Định nghĩa các kiến trúc mạng nơ-ron
+│   │   └── network.py        # BaselineMLP, SimpleCNN và Model Factory
+│   ├── training/             # Logic huấn luyện mô hình
+│   │   ├── trainer.py        # Vòng lặp train/val epoch, early stopping, LR scheduler
+│   │   └── checkpoint.py     # Lưu/load state_dict mô hình, optimizer, epoch tốt nhất
+│   ├── evaluation/           # Đánh giá và phân tích lỗi
+│   │   ├── metrics.py        # Tính Accuracy, Precision, Recall, Macro/Weighted F1, Confusion Matrix
+│   │   └── errors.py         # Trích xuất và phân tích các cặp lớp nhầm lẫn nhiều nhất
+│   ├── visualization/        # Vẽ biểu đồ trực quan hóa
+│   │   └── plots.py          # Biểu đồ EDA, Confusion Matrix, Learning curves, Sample grid
+│   └── utils/                # Tiện ích bổ trợ
+│       ├── reproducibility.py# Cố định random seed và phát hiện thiết bị tính toán (CPU/CUDA)
+│       └── logging.py        # Ghi nhật ký thí nghiệm dạng JSON
+├── scripts/                  # CLI Entrypoints (các script thực thi đầu cuối)
+│   ├── download_and_eda.py   # Tải dữ liệu, kiểm tra dữ liệu và chạy EDA
+│   ├── train.py              # Huấn luyện mô hình theo thí nghiệm chỉ định
+│   ├── evaluate.py           # Đánh giá mô hình tốt nhất trên tập Test độc lập
+│   └── predict.py            # Chạy suy luận (inference) trên ảnh thực tế
+├── tests/                    # 46 kiểm thử tự động với Pytest
+│   ├── test_dataset.py       # Kiểm thử shape, dtype, dải nhãn, transforms, leak-free split
+│   ├── test_model.py         # Kiểm thử logits đầu ra, số lượng tham số
+│   ├── test_training.py      # Kiểm thử optimizer, gradient update, chế độ train/eval
+│   └── test_checkpoint.py    # Kiểm thử lưu/khôi phục checkpoint không làm mất mát trọng số
+├── artifacts/                # Nơi lưu trữ toàn bộ kết quả thực nghiệm
+│   ├── checkpoints/          # Các file trọng số mô hình tốt nhất (.pt)
+│   ├── eda/                  # Thống kê phân phối dữ liệu (.json)
+│   ├── experiments/          # Lịch sử và thông số các lần huấn luyện (.json)
+│   ├── figures/              # Toàn bộ hình ảnh biểu đồ phân tích (.png)
+│   ├── metrics/              # Báo cáo đánh giá chi tiết (.txt, .json)
+│   └── predictions/          # Ảnh kết quả suy luận thực tế (.png)
+└── docs/                     # 8 tài liệu kỹ thuật chuẩn mực (từ 01 đến 08)
 ```
 
 ### 2.1 Thư mục Cấu hình (configs/)
