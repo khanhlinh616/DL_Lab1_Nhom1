@@ -62,7 +62,7 @@ r"""# BÁO CÁO TOÀN DIỆN: PHÂN LOẠI ẢNH THỜI TRANG FASHIONMNIST BẰN
 ## Quy trình Deep Learning chuẩn 21 bước — Khám phá dữ liệu, Huấn luyện, Đánh giá và Phân tích lỗi
 
 ---
-### 📌 THÔNG TIN TỔNG QUAN
+### THÔNG TIN TỔNG QUAN
 - **Đề tài:** Phân loại ảnh thời trang FashionMNIST (10 lớp) sử dụng Deep Learning (PyTorch).
 - **Mục tiêu:** Áp dụng tư duy kỹ thuật Machine Learning / Deep Learning chuẩn mực gồm 21 bước; xây dựng pipeline tái lập được, kiểm chứng bằng thực nghiệm và trực quan hóa toàn diện.
 - **Thư viện trực quan hóa chính:**
@@ -131,7 +131,7 @@ else:
     cells.append(code_dist)
 
     cells.append(nbf.v4.new_markdown_cell(
-r"""**🔍 Giải thích và Nhận xét về Biểu đồ Phân phối Lớp:**
+r"""**Giải thích và Nhận xét về Biểu đồ Phân phối Lớp:**
 1. **Đặc điểm phân phối:**
    - Tập huấn luyện (Train) gồm **60,000 mẫu**, chia đều tuyệt đối cho 10 lớp: mỗi lớp có đúng **6,000 mẫu** (10.0%).
    - Tập kiểm thử (Test) gồm **10,000 mẫu**, chia đều mỗi lớp đúng **1,000 mẫu** (10.0%).
@@ -167,7 +167,7 @@ if img_grid_path.exists():
     cells.append(code_grid)
 
     cells.append(nbf.v4.new_markdown_cell(
-r"""**🔍 Giải thích và Nhận xét về Lưới Mẫu:**
+r"""**Giải thích và Nhận xét về Lưới Mẫu:**
 1. **Đặc điểm hình ảnh:** Mỗi mẫu là ảnh đơn sắc (grayscale 1 channel) kích thước $28 \times 28$ pixel.
 2. **Quan sát trực giác:**
    - **Trouser (Quần)**, **Bag (Túi xách)**, **Ankle boot (Bốt)** có cấu trúc viền bao ngoài và hình dạng hình học rất riêng biệt $\rightarrow$ dự kiến mô hình sẽ học rất nhanh và phân loại chính xác.
@@ -209,7 +209,7 @@ if p1.exists() and p2.exists():
     cells.append(code_pix)
 
     cells.append(nbf.v4.new_markdown_cell(
-r"""**🔍 Giải thích thông số thống kê thu được từ EDA:**
+r"""**Giải thích thông số thống kê thu được từ EDA:**
 - **Thống kê cường độ:**
   - Pixel Mean toàn tập: $\mu \approx \mathbf{0.2860}$
   - Pixel Std toàn tập: $\sigma \approx \mathbf{0.3530}$
@@ -278,7 +278,7 @@ if c1.exists() and c2.exists():
     cells.append(code_curves)
 
     cells.append(nbf.v4.new_markdown_cell(
-r"""**🔍 Phân tích Diễn biến Huấn luyện:**
+r"""**Phân tích Diễn biến Huấn luyện:**
 1. **BaselineMLP:**
    - Dùng SGD với Learning Rate cố định 0.01.
    - Validation Accuracy tăng từ 73.58% ở epoch 1 lên 82.16% ở epoch 10. Khoảng cách giữa Train Loss và Val Loss khá nhỏ, không bị overfitting nặng nhưng độ dốc giảm chậm.
@@ -335,7 +335,7 @@ if cm_norm_path.exists() and cm_cnt_path.exists():
     cells.append(code_cm)
 
     cells.append(nbf.v4.new_markdown_cell(
-r"""**🔍 Nhận xét về Ma Trận Nhầm Lẫn:**
+r"""**Nhận xét về Ma Trận Nhầm Lẫn:**
 - **Đường chéo chính nổi bật màu xanh đậm:** Cho thấy phần lớn các lớp đều đạt tỷ lệ nhận dạng đúng trên 80%–96%.
 - **Các lớp đạt độ chính xác cao nhất:**
   - **Trouser (Quần):** 95.40% đúng.
@@ -371,7 +371,7 @@ if f1_path.exists():
     cells.append(code_f1)
 
     cells.append(nbf.v4.new_markdown_cell(
-r"""**🔍 So sánh cải tiến F1-score của SimpleCNN so với BaselineMLP:**
+r"""**So sánh cải tiến F1-score của SimpleCNN so với BaselineMLP:**
 - **Pullover:** Tăng từ $68.44\% \rightarrow \mathbf{79.20\%}$ (**+10.76%**).
 - **Sneaker:** Tăng từ $87.81\% \rightarrow \mathbf{93.04\%}$ (**+5.23%**).
 - **Sandal:** Tăng từ $90.56\% \rightarrow \mathbf{94.42\%}$ (**+3.86%**).
@@ -415,7 +415,7 @@ if err_path.exists() and corr_path.exists():
     cells.append(code_err)
 
     cells.append(nbf.v4.new_markdown_cell(
-r"""**🔍 Bóc tách 5 Cặp Lớp Nhầm Lẫn Nhiều Nhất:**
+r"""**Bóc tách 5 Cặp Lớp Nhầm Lẫn Nhiều Nhất:**
 
 1. **Shirt nhầm thành T-shirt/top (176 lỗi):**
    - *Nguyên nhân:* Cả 2 đều là áo ngắn tay hoặc dài tay mặc trên thân người. Khi nén về $28 \times 28$ grayscale, cúc áo và đường xẻ cổ áo sơ mi mờ đi, chỉ còn lại đường viền ngoài giống hệt áo phông.
@@ -426,7 +426,7 @@ r"""**🔍 Bóc tách 5 Cặp Lớp Nhầm Lẫn Nhiều Nhất:**
 4. **Shirt nhầm thành Coat (105 lỗi) & Coat nhầm thành Pullover (105 lỗi):**
    - *Nguyên nhân:* Thiếu kênh màu sắc (RGB) và chất liệu vải, độ dày của vải dạ/vải len không thể biểu diễn rõ ở ảnh grayscale độ phân giải thấp.
 
-**💡 Bài học kỹ thuật:**
+**Bài học rút ra từ thực nghiệm:**
 Để phân loại chính xác các lớp áo này, cần các kỹ thuật nâng cao hơn như:
 - Tăng độ phân giải đầu vào nếu có.
 - Áp dụng các phép biến đổi tăng cường dữ liệu nâng cao như Mixup, CutMix.
