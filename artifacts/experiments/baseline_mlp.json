@@ -1,0 +1,301 @@
+{
+  "experiment_name": "baseline_mlp",
+  "timestamp": "2026-10-25 12:26:57",
+  "notes": "Evaluated on test set. Accuracy=0.8207",
+  "config": {
+    "model": {
+      "architecture": "BaselineMLP",
+      "hidden_channels": [
+        32,
+        64
+      ],
+      "fc_hidden": 256,
+      "dropout": 0.0,
+      "hidden_units": 256
+    },
+    "training": {
+      "epochs": 10,
+      "optimizer": "sgd",
+      "learning_rate": 0.01,
+      "weight_decay": 0.0,
+      "lr_scheduler": null,
+      "early_stopping_patience": 5,
+      "save_every_n_epochs": 5,
+      "loss": "cross_entropy"
+    },
+    "dataloader": {
+      "batch_size": 128,
+      "num_workers": 0,
+      "pin_memory": false
+    },
+    "data": {
+      "val_fraction": 0.1667,
+      "augment_train": true,
+      "normalize_mean": 0.286,
+      "normalize_std": 0.353
+    },
+    "seed": 42
+  },
+  "training_summary": {
+    "epochs_run": 10,
+    "best_val_acc": 0.8216,
+    "best_epoch": 10,
+    "total_time_sec": 192.46,
+    "final_train_loss": 0.5267064278316498,
+    "final_val_loss": 0.4799736556053162
+  },
+  "evaluation_metrics": {
+    "accuracy": 0.8207,
+    "precision_macro": 0.822249,
+    "recall_macro": 0.8207,
+    "f1_macro": 0.820411,
+    "precision_weighted": 0.822249,
+    "recall_weighted": 0.8207,
+    "f1_weighted": 0.820411,
+    "per_class": [
+      {
+        "class": "T-shirt/top",
+        "precision": 0.7621,
+        "recall": 0.817,
+        "f1": 0.7886,
+        "support": 1000
+      },
+      {
+        "class": "Trouser",
+        "precision": 0.9707,
+        "recall": 0.96,
+        "f1": 0.9653,
+        "support": 1000
+      },
+      {
+        "class": "Pullover",
+        "precision": 0.7667,
+        "recall": 0.618,
+        "f1": 0.6844,
+        "support": 1000
+      },
+      {
+        "class": "Dress",
+        "precision": 0.8458,
+        "recall": 0.85,
+        "f1": 0.8479,
+        "support": 1000
+      },
+      {
+        "class": "Coat",
+        "precision": 0.7369,
+        "recall": 0.745,
+        "f1": 0.7409,
+        "support": 1000
+      },
+      {
+        "class": "Sandal",
+        "precision": 0.9196,
+        "recall": 0.892,
+        "f1": 0.9056,
+        "support": 1000
+      },
+      {
+        "class": "Shirt",
+        "precision": 0.5251,
+        "recall": 0.565,
+        "f1": 0.5443,
+        "support": 1000
+      },
+      {
+        "class": "Sneaker",
+        "precision": 0.8812,
+        "recall": 0.875,
+        "f1": 0.8781,
+        "support": 1000
+      },
+      {
+        "class": "Bag",
+        "precision": 0.9226,
+        "recall": 0.953,
+        "f1": 0.9375,
+        "support": 1000
+      },
+      {
+        "class": "Ankle boot",
+        "precision": 0.8919,
+        "recall": 0.932,
+        "f1": 0.9115,
+        "support": 1000
+      }
+    ],
+    "confusion_matrix": [
+      [
+        817,
+        3,
+        14,
+        51,
+        4,
+        2,
+        90,
+        0,
+        18,
+        1
+      ],
+      [
+        5,
+        960,
+        3,
+        20,
+        2,
+        1,
+        6,
+        0,
+        2,
+        1
+      ],
+      [
+        10,
+        1,
+        618,
+        10,
+        152,
+        0,
+        195,
+        0,
+        13,
+        1
+      ],
+      [
+        21,
+        19,
+        5,
+        850,
+        35,
+        0,
+        64,
+        0,
+        5,
+        1
+      ],
+      [
+        1,
+        0,
+        75,
+        30,
+        745,
+        0,
+        139,
+        1,
+        8,
+        1
+      ],
+      [
+        1,
+        0,
+        0,
+        5,
+        0,
+        892,
+        0,
+        70,
+        4,
+        28
+      ],
+      [
+        215,
+        5,
+        81,
+        35,
+        69,
+        0,
+        565,
+        0,
+        28,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        46,
+        0,
+        875,
+        2,
+        77
+      ],
+      [
+        2,
+        1,
+        10,
+        3,
+        4,
+        4,
+        17,
+        5,
+        953,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        0,
+        25,
+        0,
+        42,
+        0,
+        932
+      ]
+    ],
+    "test_accuracy": 0.8207
+  },
+  "full_history": {
+    "train_loss": [
+      0.9731210589027405,
+      0.7210386417007446,
+      0.6612692525100708,
+      0.6179750455856323,
+      0.5969019556045532,
+      0.5759771296691895,
+      0.5603644991111756,
+      0.5495746200942994,
+      0.54004781747818,
+      0.5267064278316498
+    ],
+    "val_loss": [
+      0.7229161471843719,
+      0.6253904712677002,
+      0.5919781914234161,
+      0.5680665390014649,
+      0.5465451521158219,
+      0.538004379749298,
+      0.5258100133895874,
+      0.5179214240074158,
+      0.5034782779932022,
+      0.4799736556053162
+    ],
+    "train_acc": [
+      0.643,
+      0.73014,
+      0.75366,
+      0.77032,
+      0.7777,
+      0.78722,
+      0.79202,
+      0.79736,
+      0.80206,
+      0.80698
+    ],
+    "val_acc": [
+      0.7358,
+      0.769,
+      0.7809,
+      0.7933,
+      0.7942,
+      0.7957,
+      0.8048,
+      0.8007,
+      0.8103,
+      0.8216
+    ]
+  }
+}

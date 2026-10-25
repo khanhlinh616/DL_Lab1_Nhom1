@@ -1,0 +1,69 @@
+# =============================================================================
+# FashionMNIST Deep Learning — Default Configuration
+# =============================================================================
+
+project:
+  name: fashionmnist-deep-learning
+  version: "1.0.0"
+  seed: 42
+
+paths:
+  data_root: data/raw
+  processed_root: data/processed
+  artifacts_root: artifacts
+  checkpoints_dir: artifacts/checkpoints
+  eda_dir: artifacts/eda
+  figures_dir: artifacts/figures
+  metrics_dir: artifacts/metrics
+  predictions_dir: artifacts/predictions
+  experiments_dir: artifacts/experiments
+  reports_dir: artifacts/reports
+
+data:
+  dataset: FashionMNIST
+  num_classes: 10
+  image_size: 28
+  channels: 1
+  class_names:
+    - "T-shirt/top"
+    - "Trouser"
+    - "Pullover"
+    - "Dress"
+    - "Coat"
+    - "Sandal"
+    - "Shirt"
+    - "Sneaker"
+    - "Bag"
+    - "Ankle boot"
+  val_fraction: 0.1667   # ~10000 samples from 60000 → roughly same as test set
+  split_strategy: stratified
+  normalize_mean: 0.2860
+  normalize_std: 0.3530
+  augment_train: true
+
+dataloader:
+  batch_size: 128
+  num_workers: 0
+  pin_memory: false
+
+model:
+  architecture: SimpleCNN
+  hidden_channels:
+    - 32
+    - 64
+  fc_hidden: 256
+  dropout: 0.3
+
+training:
+  epochs: 15
+  optimizer: adam
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  lr_scheduler: cosine
+  early_stopping_patience: 5
+  save_every_n_epochs: 5
+  loss: cross_entropy
+
+evaluation:
+  primary_metric: val_accuracy
+  average: weighted

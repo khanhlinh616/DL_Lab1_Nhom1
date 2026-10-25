@@ -1,0 +1,50 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Dataset files (large binary)
+data/raw/FashionMNIST/
+data/raw/*.gz
+data/raw/*.bin
+data/processed/
+
+# Model checkpoints (ignore periodic epoch checkpoints)
+artifacts/checkpoints/**/checkpoint_epoch_*.pt
+
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# pytest cache
+.pytest_cache/
+.coverage
+htmlcov/

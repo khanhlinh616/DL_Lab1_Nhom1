@@ -1,0 +1,69 @@
+# =============================================================================
+# FashionMNIST Deep Learning — Experiments Configuration
+# Each experiment overrides keys from default.yaml
+# =============================================================================
+
+experiments:
+
+  baseline_mlp:
+    description: "Baseline MLP — flatten + 2 FC layers"
+    model:
+      architecture: BaselineMLP
+      hidden_units: 256
+      dropout: 0.0
+    training:
+      epochs: 10
+      optimizer: sgd
+      learning_rate: 0.01
+      weight_decay: 0.0
+      lr_scheduler: null
+    dataloader:
+      batch_size: 128
+
+  exp_cnn_small:
+    description: "Small CNN — 2 conv blocks"
+    model:
+      architecture: SimpleCNN
+      hidden_channels: [32, 64]
+      fc_hidden: 256
+      dropout: 0.3
+    training:
+      epochs: 15
+      optimizer: adam
+      learning_rate: 0.001
+      weight_decay: 0.0001
+      lr_scheduler: cosine
+    dataloader:
+      batch_size: 128
+
+  exp_lr_01:
+    description: "SimpleCNN with higher LR=0.01"
+    model:
+      architecture: SimpleCNN
+      hidden_channels: [32, 64]
+      fc_hidden: 256
+      dropout: 0.3
+    training:
+      epochs: 15
+      optimizer: adam
+      learning_rate: 0.01
+      weight_decay: 0.0001
+      lr_scheduler: cosine
+    dataloader:
+      batch_size: 128
+
+  exp_batch_256:
+    description: "SimpleCNN with batch_size=256"
+    model:
+      architecture: SimpleCNN
+      hidden_channels: [32, 64]
+      fc_hidden: 256
+      dropout: 0.3
+    training:
+      epochs: 15
+      optimizer: adam
+      learning_rate: 0.001
+      weight_decay: 0.0001
+      lr_scheduler: cosine
+    dataloader:
+      batch_size: 256
