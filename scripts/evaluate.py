@@ -89,7 +89,7 @@ def main() -> None:
         test_ds_raw = load_raw_dataset(data_root, train=False, download=False)
     except Exception as e:
         print(f"[ERROR] Dataset not found: {e}")
-        print("  → Run 'py -3 scripts/download_and_eda.py' first.")
+        print("  -> Run 'py -3 scripts/download_and_eda.py' first.")
         sys.exit(1)
 
     _, _, test_loader = build_dataloaders(cfg, full_train_ds, test_ds_raw)
@@ -110,7 +110,7 @@ def main() -> None:
 
     if not best_ckpt_path.exists():
         print(f"[ERROR] Best checkpoint not found: {best_ckpt_path}")
-        print("  → Run training first: py -3 scripts/train.py --experiment {experiment_name}")
+        print("  -> Run training first: py -3 scripts/train.py --experiment {experiment_name}")
         sys.exit(1)
 
     ckpt = load_checkpoint(best_ckpt_path, model, device=device)
@@ -140,7 +140,7 @@ def main() -> None:
     report_path = metrics_dir / f"classification_report_{experiment_name}.txt"
     with report_path.open("w", encoding="utf-8") as f:
         f.write(report)
-    print(f"[Eval] Report saved → {report_path}")
+    print(f"[Eval] Report saved -> {report_path}")
 
     # ── Plots ─────────────────────────────────────────────────────────────────
     print("\n[Plots] Generating evaluation figures...")
@@ -155,7 +155,7 @@ def main() -> None:
           f"({error_info['error_rate']:.2%})")
     print("\n  Top confused class pairs:")
     for pair in error_info["top_confused_pairs"][:5]:
-        print(f"    {pair['true_class']:15s} → {pair['pred_class']:15s} : {pair['count']} errors")
+        print(f"    {pair['true_class']:15s} -> {pair['pred_class']:15s} : {pair['count']} errors")
 
     plot_misclassified_grid(
         dataset=test_display_ds,

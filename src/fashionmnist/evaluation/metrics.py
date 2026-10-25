@@ -154,4 +154,4 @@ def save_metrics(metrics: dict[str, Any], output_path: Path) -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with output_path.open("w", encoding="utf-8") as f:
         json.dump(metrics, f, indent=2)
-    print(f"[Metrics] Saved → {output_path}")
+    print(f"[Metrics] Saved -> {output_path}")

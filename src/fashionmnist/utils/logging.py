@@ -75,7 +75,7 @@ def save_experiment_log(
     out_path = experiments_dir / f"{experiment_name}.json"
     with out_path.open("w", encoding="utf-8") as f:
         json.dump(log, f, indent=2)
-    print(f"[Log] Experiment saved → {out_path}")
+    print(f"[Log] Experiment saved -> {out_path}")
     return out_path
 
 

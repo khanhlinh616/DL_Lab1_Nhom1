@@ -63,7 +63,7 @@ def main() -> None:
         test_ds_raw = load_raw_dataset(data_root, train=False, download=True)
     except Exception as e:
         print(f"[ERROR] Cannot load dataset: {e}")
-        print("  → Run 'py -3 scripts/download_and_eda.py' first.")
+        print("  -> Run 'py -3 scripts/download_and_eda.py' first.")
         sys.exit(1)
 
     # Verify no leakage in split

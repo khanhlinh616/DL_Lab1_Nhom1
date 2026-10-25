@@ -45,8 +45,8 @@ def main() -> None:
         test_ds = load_raw_dataset(data_root, train=False, download=True)
     except Exception as e:
         print(f"\n[ERROR] Failed to load/download FashionMNIST: {e}")
-        print("  → Check internet connectivity and retry.")
-        print("  → If files are partially downloaded, clear data/raw/ and retry.")
+        print("  -> Check internet connectivity and retry.")
+        print("  -> If files are partially downloaded, clear data/raw/ and retry.")
         sys.exit(1)
 
     print(f"[Data] Train: {len(train_ds):,} samples | Test: {len(test_ds):,} samples")

@@ -156,7 +156,7 @@ def plot_misclassified_grid(
     out_path = figures_dir / "error_misclassified_grid.png"
     plt.savefig(out_path, dpi=120, bbox_inches="tight")
     plt.close()
-    print(f"[ErrorAnalysis] Saved → {out_path}")
+    print(f"[ErrorAnalysis] Saved -> {out_path}")
 
 
 def plot_correct_predictions_grid(
@@ -204,4 +204,4 @@ def plot_correct_predictions_grid(
     out_path = figures_dir / "correct_predictions_grid.png"
     plt.savefig(out_path, dpi=120, bbox_inches="tight")
     plt.close()
-    print(f"[ErrorAnalysis] Saved → {out_path}")
+    print(f"[ErrorAnalysis] Saved -> {out_path}")

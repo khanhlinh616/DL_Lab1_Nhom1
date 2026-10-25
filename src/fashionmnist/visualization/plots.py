@@ -64,7 +64,7 @@ def plot_training_history(
     out_path = figures_dir / f"training_history_{experiment_name}.png"
     plt.savefig(out_path, dpi=120, bbox_inches="tight")
     plt.close()
-    print(f"[Plots] Saved → {out_path}")
+    print(f"[Plots] Saved -> {out_path}")
 
 
 def plot_confusion_matrix(
@@ -119,7 +119,7 @@ def plot_confusion_matrix(
     out_path = figures_dir / f"confusion_matrix_{experiment_name}_{suffix}.png"
     plt.savefig(out_path, dpi=120, bbox_inches="tight")
     plt.close()
-    print(f"[Plots] Saved → {out_path}")
+    print(f"[Plots] Saved -> {out_path}")
 
 
 def plot_per_class_f1(
@@ -156,7 +156,7 @@ def plot_per_class_f1(
     out_path = figures_dir / f"per_class_f1_{experiment_name}.png"
     plt.savefig(out_path, dpi=120, bbox_inches="tight")
     plt.close()
-    print(f"[Plots] Saved → {out_path}")
+    print(f"[Plots] Saved -> {out_path}")
 
 
 def plot_experiment_comparison(
@@ -198,4 +198,4 @@ def plot_experiment_comparison(
     out_path = figures_dir / "experiment_comparison.png"
     plt.savefig(out_path, dpi=120, bbox_inches="tight")
     plt.close()
-    print(f"[Plots] Saved → {out_path}")
+    print(f"[Plots] Saved -> {out_path}")

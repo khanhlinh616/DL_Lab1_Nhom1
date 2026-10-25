@@ -143,7 +143,7 @@ def main() -> None:
     out_path = predictions_dir / f"predictions_{experiment_name}.png"
     plt.savefig(out_path, dpi=120, bbox_inches="tight")
     plt.close()
-    print(f"[Predict] Saved predictions grid → {out_path}")
+    print(f"[Predict] Saved predictions grid -> {out_path}")
 
     # Console summary
     correct = sum(int(t) == int(p) for t, p in zip(true_labels_list, preds))
