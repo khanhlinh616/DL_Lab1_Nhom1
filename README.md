@@ -171,13 +171,13 @@ Ngược lại, các lớp có hình thái biên dạng đặc thù đạt độ
 
 | Tài Liệu | Nội Dung Chính |
 |---|---|
-| [01_project_overview.md](file:///c:/Project/DL/fashionmnist-deep-learning/docs/01_project_overview.md) | Tổng quan dự án, phạm vi bài toán và mục tiêu thực nghiệm |
-| [02_dataset_and_eda.md](file:///c:/Project/DL/fashionmnist-deep-learning/docs/02_dataset_and_eda.md) | Phân tích khám phá dữ liệu (EDA) và thống kê pixel |
-| [03_preprocessing_and_splitting.md](file:///c:/Project/DL/fashionmnist-deep-learning/docs/03_preprocessing_and_splitting.md) | Tiền xử lý, chuẩn hóa Z-score và chiến lược chia tập chống rò rỉ |
-| [04_model_architecture.md](file:///c:/Project/DL/fashionmnist-deep-learning/docs/04_model_architecture.md) | Chi tiết toán học các lớp mạng của BaselineMLP và SimpleCNN |
-| [05_training_and_experiments.md](file:///c:/Project/DL/fashionmnist-deep-learning/docs/05_training_and_experiments.md) | Vòng lặp huấn luyện, optimizer, Cosine LR scheduler, early stopping |
-| [06_evaluation_and_error_analysis.md](file:///c:/Project/DL/fashionmnist-deep-learning/docs/06_evaluation_and_error_analysis.md) | Phương pháp luận đánh giá, confusion matrix và phân tích lỗi |
-| [07_reproducibility_and_limitations.md](file:///c:/Project/DL/fashionmnist-deep-learning/docs/07_reproducibility_and_limitations.md) | Cấu hình tái lập (seed 42), môi trường thử nghiệm và giới hạn |
-| [08_results_and_conclusion.md](file:///c:/Project/DL/fashionmnist-deep-learning/docs/08_results_and_conclusion.md) | Bảng tổng hợp số liệu thực nghiệm đối chứng và kết luận |
-| [final_evaluation_report.md](file:///c:/Project/DL/fashionmnist-deep-learning/artifacts/reports/final_evaluation_report.md) | Báo cáo kỹ thuật tổng kết nghiệm thu dự án |
-| [fashionmnist_complete_pipeline.ipynb](file:///c:/Project/DL/fashionmnist-deep-learning/notebooks/fashionmnist_complete_pipeline.ipynb) | Sổ tay thực nghiệm hoàn chỉnh kèm biểu đồ nhúng trực quan |
+| [01_project_overview.md](docs/01_project_overview.md) | Tổng quan dự án, phạm vi bài toán và mục tiêu thực nghiệm |
+| [02_dataset_and_eda.md](docs/02_dataset_and_eda.md) | Phân tích khám phá dữ liệu (EDA) và thống kê pixel |
+| [03_preprocessing_and_splitting.md](docs/03_preprocessing_and_splitting.md) | Tiền xử lý, chuẩn hóa Z-score và chiến lược chia tập chống rò rỉ |
+| [04_model_architecture.md](docs/04_model_architecture.md) | Chi tiết toán học các lớp mạng của BaselineMLP và SimpleCNN |
+| [05_training_and_experiments.md](docs/05_training_and_experiments.md) | Vòng lặp huấn luyện, optimizer, Cosine LR scheduler, early stopping |
+| [06_evaluation_and_error_analysis.md](docs/06_evaluation_and_error_analysis.md) | Phương pháp luận đánh giá, confusion matrix và phân tích lỗi |
+| [07_reproducibility_and_limitations.md](docs/07_reproducibility_and_limitations.md) | Cấu hình tái lập (seed 42), môi trường thử nghiệm và giới hạn |
+| [08_results_and_conclusion.md](docs/08_results_and_conclusion.md) | Bảng tổng hợp số liệu thực nghiệm đối chứng và kết luận |
+| [final_evaluation_report.md](artifacts/reports/final_evaluation_report.md) | Báo cáo kỹ thuật tổng kết nghiệm thu dự án |
+| [fashionmnist_complete_pipeline.ipynb](notebooks/fashionmnist_complete_pipeline.ipynb) | Sổ tay thực nghiệm hoàn chỉnh kèm biểu đồ nhúng trực quan |
